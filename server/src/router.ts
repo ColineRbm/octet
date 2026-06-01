@@ -37,6 +37,23 @@ router.put(
   isAdmin,
   userActions.editStatus,
 );
+
+// Beneficiary routes (admin only)
+import beneficiaryActions from "./modules/beneficiary/beneficiaryActions";
+
+router.get(
+  "/api/beneficiaries",
+  verifyToken,
+  isAdmin,
+  beneficiaryActions.browse,
+);
+router.get(
+  "/api/beneficiaries/:id",
+  verifyToken,
+  isAdmin,
+  beneficiaryActions.read,
+);
+router.post("/api/beneficiaries", verifyToken, isAdmin, beneficiaryActions.add);
 /* ************************************************************************* */
 
 export default router;
