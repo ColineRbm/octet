@@ -54,6 +54,24 @@ router.get(
   beneficiaryActions.read,
 );
 router.post("/api/beneficiaries", verifyToken, isAdmin, beneficiaryActions.add);
+
+// Attribution routes (admin only)
+import attributionActions from "./modules/attribution/attributionActions";
+
+router.get(
+  "/api/attributions",
+  verifyToken,
+  isAdmin,
+  attributionActions.browse,
+);
+router.get(
+  "/api/attributions/:id",
+  verifyToken,
+  isAdmin,
+  attributionActions.read,
+);
+router.post("/api/attributions", verifyToken, isAdmin, attributionActions.add);
+
 /* ************************************************************************* */
 
 export default router;
