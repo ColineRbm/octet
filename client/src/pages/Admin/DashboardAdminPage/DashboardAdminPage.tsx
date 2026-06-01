@@ -1,12 +1,12 @@
+import { ArrowLeftRight, Laptop, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Laptop, ArrowLeftRight, Users, TrendingUp } from "lucide-react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import {
+  getAttributions,
+  getBeneficiaries,
   getDevices,
   getUsers,
-  getBeneficiaries,
-  getAttributions,
 } from "../../../services/api";
 import "./DashboardAdminPage.css";
 

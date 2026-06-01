@@ -1,13 +1,13 @@
-import { NavLink, useNavigate } from "react-router";
 import {
-  LayoutDashboard,
-  Laptop,
   ArrowLeftRight,
-  Users,
-  UserCheck,
+  Laptop,
+  LayoutDashboard,
   LogOut,
   Recycle,
+  UserCheck,
+  Users,
 } from "lucide-react";
+import { NavLink, useNavigate } from "react-router";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./Sidebar.css";
 
