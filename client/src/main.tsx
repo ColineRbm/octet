@@ -3,17 +3,17 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router";
 import "./index.css";
 
-import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 
 import App from "./App";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import AttributionsPage from "./pages/Admin/AttributionsPage";
+import BeneficiariesPage from "./pages/Admin/BeneficiariesPage";
 import DashboardAdminPage from "./pages/Admin/DashboardAdminPage";
-import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";
 import DevicesPage from "./pages/Admin/DevicesPage";
 import UsersPage from "./pages/Admin/UsersPage";
-import BeneficiariesPage from "./pages/Admin/BeneficiariesPage";
-import AttributionsPage from "./pages/Admin/AttributionsPage";
+import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 
 const router = createBrowserRouter([
   {

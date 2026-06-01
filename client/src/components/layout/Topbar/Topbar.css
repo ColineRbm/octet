@@ -1,0 +1,68 @@
+/* ===== TOPBAR ===== */
+.topbar {
+  background: var(--color-white);
+  border-bottom: 0.5px solid var(--color-border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.topbar__subtitle {
+  font-size: 11px;
+  color: var(--color-text-sub);
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__btn {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--color-border);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  background: var(--color-white);
+  color: var(--color-text-sub);
+  transition: all 0.15s;
+}
+
+.topbar__btn:hover {
+  background: var(--color-ardoise-50);
+}
+
+.topbar__btn--primary {
+  background: var(--color-abricot);
+  color: var(--color-ardoise-800);
+  border-color: var(--color-abricot);
+  font-weight: 600;
+}
+
+.topbar__btn--primary:hover {
+  background: var(--color-abricot-dark);
+  color: var(--color-white);
+}
