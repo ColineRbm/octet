@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 
 import App from "./App";
+import AddDevicePage from "./pages/Admin/AddDevicePage/AddDevicePage";
 import AttributionsPage from "./pages/Admin/AttributionsPage";
 import BeneficiariesPage from "./pages/Admin/BeneficiariesPage";
 import DashboardAdminPage from "./pages/Admin/DashboardAdminPage/DashboardAdminPage";
@@ -37,6 +38,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute requiredRole="admin">
         <DevicesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/devices/new",
+    element: (
+      <ProtectedRoute requiredRole="admin">
+        <AddDevicePage />
       </ProtectedRoute>
     ),
   },
