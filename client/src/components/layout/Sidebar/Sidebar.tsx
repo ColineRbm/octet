@@ -1,4 +1,13 @@
 import { NavLink, useNavigate } from "react-router";
+import {
+  LayoutDashboard,
+  Laptop,
+  ArrowLeftRight,
+  Users,
+  UserCheck,
+  LogOut,
+  Recycle,
+} from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./Sidebar.css";
 
@@ -11,39 +20,54 @@ const Sidebar = () => {
     navigate("/login");
   };
 
-  // Get user initials for avatar
   const initials = user
     ? `${user.firstname[0]}${user.lastname[0]}`.toUpperCase()
     : "??";
 
-  // Admin nav items
   const adminNavItems = [
-    { to: "/admin", label: "Tableau de bord", icon: "📊", end: true },
-    { to: "/admin/devices", label: "Appareils", icon: "💻" },
-    { to: "/admin/attributions", label: "Attributions", icon: "🔄" },
-    { to: "/admin/beneficiaries", label: "Bénéficiaires", icon: "👥" },
-    { to: "/admin/users", label: "Bénévoles", icon: "🙋" },
+    {
+      to: "/admin",
+      label: "Tableau de bord",
+      icon: <LayoutDashboard size={16} />,
+      end: true,
+    },
+    { to: "/admin/devices", label: "Appareils", icon: <Laptop size={16} /> },
+    {
+      to: "/admin/attributions",
+      label: "Attributions",
+      icon: <ArrowLeftRight size={16} />,
+    },
+    {
+      to: "/admin/beneficiaries",
+      label: "Bénéficiaires",
+      icon: <Users size={16} />,
+    },
+    { to: "/admin/users", label: "Bénévoles", icon: <UserCheck size={16} /> },
   ];
 
-  // Benevole nav items
   const benevoleNavItems = [
-    { to: "/benevole", label: "Ma file de travail", icon: "📋", end: true },
+    {
+      to: "/benevole",
+      label: "Ma file de travail",
+      icon: <LayoutDashboard size={16} />,
+      end: true,
+    },
   ];
 
   const navItems = user?.role === "admin" ? adminNavItems : benevoleNavItems;
 
   return (
     <aside className="sidebar">
-      {/* Brand */}
       <div className="sidebar__brand">
-        <div className="sidebar__brand-icon">♻</div>
+        <div className="sidebar__brand-icon">
+          <Recycle size={18} />
+        </div>
         <div>
           <div className="sidebar__brand-name">Octet</div>
           <div className="sidebar__brand-tagline">Ressourcerie Numérique</div>
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="sidebar__section">
         <span className="sidebar__section-label">Navigation</span>
         {navItems.map((item) => (
@@ -63,7 +87,6 @@ const Sidebar = () => {
 
       <hr className="sidebar__divider" />
 
-      {/* User */}
       <div className="sidebar__user">
         <div className="sidebar__user-avatar">{initials}</div>
         <div>
@@ -81,7 +104,7 @@ const Sidebar = () => {
           aria-label="Se déconnecter"
           title="Se déconnecter"
         >
-          🚪
+          <LogOut size={16} />
         </button>
       </div>
     </aside>

@@ -9,7 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import App from "./App";
 import AttributionsPage from "./pages/Admin/AttributionsPage";
 import BeneficiariesPage from "./pages/Admin/BeneficiariesPage";
-import DashboardAdminPage from "./pages/Admin/DashboardAdminPage";
+import DashboardAdminPage from "./pages/Admin/DashboardAdminPage/DashboardAdminPage";
 import DevicesPage from "./pages/Admin/DevicesPage";
 import UsersPage from "./pages/Admin/UsersPage";
 import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";
