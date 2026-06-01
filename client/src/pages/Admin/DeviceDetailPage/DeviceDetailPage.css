@@ -1,0 +1,370 @@
+/* ===== DEVICE DETAIL PAGE ===== */
+.device-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* HERO */
+.device-detail__hero {
+  background: var(--color-ardoise-800);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.device-detail__hero::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(244, 162, 97, 0.05);
+  border: 1px solid rgba(244, 162, 97, 0.08);
+}
+
+.device-detail__hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: rgba(244, 162, 97, 0.15);
+  border: 0.5px solid rgba(244, 162, 97, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-abricot);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.device-detail__hero-body {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.device-detail__hero-ref {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-ardoise-400);
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+
+.device-detail__hero-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-ardoise-50);
+  margin-bottom: 4px;
+}
+
+.device-detail__hero-sub {
+  font-size: 13px;
+  color: var(--color-ardoise-400);
+}
+
+.device-detail__hero-status {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.device-detail__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.device-detail__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* LAYOUT */
+.device-detail__layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.device-detail__left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* CARDS */
+.device-detail__card {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.device-detail__card-head {
+  padding: 12px 18px;
+  border-bottom: 0.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-ardoise-50);
+}
+
+.device-detail__card-head-icon {
+  color: var(--color-abricot);
+}
+
+.device-detail__card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.device-detail__card-meta {
+  font-size: 11px;
+  color: var(--color-text-sub);
+}
+
+.device-detail__card-body {
+  padding: 18px;
+}
+
+/* INFO GRID */
+.device-detail__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.device-detail__info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.device-detail__info-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.device-detail__info-val {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.device-detail__info-val--muted {
+  color: var(--color-text-sub);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.device-detail__notes-box {
+  background: var(--color-ardoise-50);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-top: 16px;
+}
+
+/* TIMELINE */
+.device-detail__timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-detail__tl-item {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 20px;
+}
+
+.device-detail__tl-item:last-child {
+  padding-bottom: 0;
+}
+
+.device-detail__tl-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 32px;
+}
+
+.device-detail__tl-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.device-detail__tl-line {
+  width: 1.5px;
+  flex: 1;
+  margin-top: 4px;
+  background: var(--color-border);
+  min-height: 16px;
+}
+
+.device-detail__tl-body {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.device-detail__tl-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.device-detail__tl-desc {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  line-height: 1.5;
+}
+
+.device-detail__tl-meta {
+  font-size: 11px;
+  color: var(--color-text-sub);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* RIGHT SIDEBAR */
+.device-detail__right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* CTA */
+.device-detail__cta {
+  background: var(--color-abricot-pale);
+  border: 1px solid var(--color-abricot);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.device-detail__cta-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.device-detail__cta-sub {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.device-detail__cta-btn {
+  width: 100%;
+  height: 40px;
+  background: var(--color-abricot);
+  color: var(--color-ardoise-800);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  transition: background 0.15s;
+}
+
+.device-detail__cta-btn:hover {
+  background: var(--color-abricot-dark);
+  color: var(--color-white);
+}
+
+/* MINI CARD */
+.device-detail__mini-card {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.device-detail__mini-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.device-detail__mini-key {
+  font-size: 11px;
+  color: var(--color-text-sub);
+  font-weight: 500;
+}
+
+.device-detail__mini-val {
+  font-size: 12px;
+  color: var(--color-text);
+  font-weight: 500;
+  text-align: right;
+}
+
+.device-detail__mini-val--success {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.device-detail__mini-divider {
+  border: none;
+  border-top: 0.5px solid var(--color-ardoise-50);
+}
+
+/* LOADING */
+.device-detail__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--color-text-sub);
+  font-size: 13px;
+}
+
+.device-detail__not-found {
+  text-align: center;
+  padding: 48px;
+  color: var(--color-text-sub);
+}

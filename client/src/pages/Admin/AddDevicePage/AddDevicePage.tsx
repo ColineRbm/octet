@@ -1,6 +1,6 @@
+import { Laptop, Monitor, Plus, Tablet } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Laptop, Monitor, Plus, Tablet } from "lucide-react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { createDevice } from "../../../services/api";
 import "./AddDevicePage.css";
