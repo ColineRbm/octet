@@ -14,7 +14,7 @@ import DashboardAdminPage from "./pages/Admin/DashboardAdminPage/DashboardAdminP
 import DeviceDetailPage from "./pages/Admin/DeviceDetailPage/DeviceDetailPage";
 import DevicesPage from "./pages/Admin/DevicesPage/DevicesPage";
 import UsersPage from "./pages/Admin/UsersPage/UsersPage";
-import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";
+import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage/DashboardBenevolePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 
 const router = createBrowserRouter([

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Info, Lock, Mail, Plus, UserCheck, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { createUser, getUsers, updateUserStatus } from "../../../services/api";
 import "./UsersPage.css";
