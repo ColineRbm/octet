@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Building2,
   GraduationCap,
@@ -10,6 +9,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { createBeneficiary, getBeneficiaries } from "../../../services/api";
 import "./BeneficiariesPage.css";

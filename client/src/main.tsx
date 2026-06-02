@@ -13,7 +13,7 @@ import BeneficiariesPage from "./pages/Admin/BeneficiariesPage/BeneficiariesPage
 import DashboardAdminPage from "./pages/Admin/DashboardAdminPage/DashboardAdminPage";
 import DeviceDetailPage from "./pages/Admin/DeviceDetailPage/DeviceDetailPage";
 import DevicesPage from "./pages/Admin/DevicesPage/DevicesPage";
-import UsersPage from "./pages/Admin/UsersPage";
+import UsersPage from "./pages/Admin/UsersPage/UsersPage";
 import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 
