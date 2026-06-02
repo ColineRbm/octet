@@ -88,6 +88,27 @@ class DeviceRepository {
     );
     return result.affectedRows;
   }
+
+  // Get all devices handled by a specific user
+  async readByUser(userId: number) {
+    const [rows] = await databaseClient.query<Rows>(
+      `SELECT * FROM device 
+     WHERE assigned_to_user_id = ? 
+     OR added_by_user_id = ?
+     ORDER BY created_at DESC`,
+      [userId, userId],
+    );
+    return rows as Device[];
+  }
+
+  // Update notes on a device
+  async updateNotes(id: number, notes: string) {
+    const [result] = await databaseClient.query<Result>(
+      "UPDATE device SET notes = ? WHERE id = ?",
+      [notes, id],
+    );
+    return result.affectedRows;
+  }
 }
 
 export default new DeviceRepository();

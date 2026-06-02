@@ -55,6 +55,14 @@ export const updateDeviceStatus = (
 export const deleteDevice = (id: number) =>
   apiFetch(`/api/devices/${id}`, { method: "DELETE" });
 
+export const getMyDevices = () => apiFetch("/api/devices/my");
+
+export const updateDeviceNotes = (id: number, notes: string) =>
+  apiFetch(`/api/devices/${id}/notes`, {
+    method: "PUT",
+    body: JSON.stringify({ notes }),
+  });
+
 // Users
 export const getUsers = () => apiFetch("/api/users");
 export const getUser = (id: number) => apiFetch(`/api/users/${id}`);

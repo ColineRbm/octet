@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   CheckCircle,
   Laptop,
@@ -9,6 +8,7 @@ import {
   Wrench,
   XCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { useAuth } from "../../../contexts/AuthContext";
 import { getDevices, updateDeviceStatus } from "../../../services/api";

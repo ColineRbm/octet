@@ -20,9 +20,11 @@ import { isAdmin, verifyToken } from "./middlewares/authMiddleware";
 import deviceActions from "./modules/device/deviceActions";
 
 router.get("/api/devices", verifyToken, deviceActions.browse);
+router.get("/api/devices/my", verifyToken, deviceActions.readByUser);
 router.get("/api/devices/:id", verifyToken, deviceActions.read);
 router.post("/api/devices", verifyToken, isAdmin, deviceActions.add);
 router.put("/api/devices/:id/status", verifyToken, deviceActions.editStatus);
+router.put("/api/devices/:id/notes", verifyToken, deviceActions.editNotes);
 router.delete("/api/devices/:id", verifyToken, isAdmin, deviceActions.destroy);
 
 // User routes (admin only)

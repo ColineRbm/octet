@@ -91,4 +91,41 @@ const destroy: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, read, add, editStatus, destroy };
+// ReadByUser - GET /api/devices/my
+const readByUser: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id as number;
+    const devices = await deviceRepository.readByUser(userId);
+    res.json(devices);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// EditNotes - PUT /api/devices/:id/notes
+const editNotes: RequestHandler = async (req, res, next) => {
+  try {
+    const deviceId = Number(req.params.id);
+    const { notes } = req.body;
+
+    const affectedRows = await deviceRepository.updateNotes(deviceId, notes);
+
+    if (affectedRows === 0) {
+      res.sendStatus(404);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default {
+  browse,
+  read,
+  add,
+  editStatus,
+  editNotes,
+  readByUser,
+  destroy,
+};
