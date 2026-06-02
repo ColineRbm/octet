@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { ArrowLeftRight, Laptop, Monitor, Tablet } from "lucide-react";
+import { useEffect, useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { getAttributions } from "../../../services/api";
 import "./AttributionsPage.css";
