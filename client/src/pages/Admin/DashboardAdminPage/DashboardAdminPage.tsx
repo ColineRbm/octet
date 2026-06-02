@@ -263,13 +263,6 @@ const DashboardAdminPage = () => {
                       </div>
                       <div className="dashboard__ready-sub">{device.type}</div>
                     </div>
-                    <button
-                      type="button"
-                      className="dashboard__ready-btn"
-                      onClick={() => navigate("/admin/attributions")}
-                    >
-                      Attribuer
-                    </button>
                   </div>
                 ))
               )}

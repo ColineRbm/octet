@@ -1,11 +1,4 @@
-import {
-  ArrowLeftRight,
-  Eye,
-  Laptop,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { Eye, Laptop, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
@@ -200,16 +193,6 @@ const DevicesPage = () => {
                     </td>
                     <td>
                       <div className="devices__actions-cell">
-                        {device.status === "ready" && (
-                          <button
-                            type="button"
-                            className="devices__action-btn devices__action-btn--primary"
-                            title="Attribuer"
-                            onClick={() => navigate("/admin/attributions")}
-                          >
-                            <ArrowLeftRight size={14} />
-                          </button>
-                        )}
                         <button
                           type="button"
                           className="devices__action-btn"

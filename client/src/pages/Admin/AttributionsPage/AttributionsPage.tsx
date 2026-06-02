@@ -1,11 +1,72 @@
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, Plus } from "lucide-react";
+import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { DeviceIcon, EmptyState, LoadingState } from "../../../components/ui";
-import { useAttributions } from "../../../hooks";
+import {
+  DeviceIcon,
+  EmptyState,
+  LoadingState,
+  Modal,
+} from "../../../components/ui";
+import { useAttributions, useBeneficiaries, useDevices } from "../../../hooks";
+import { createAttribution } from "../../../services/api";
+import type { CessionType } from "../../../types";
 import "./AttributionsPage.css";
 
 const AttributionsPage = () => {
-  const { attributions, loading } = useAttributions();
+  const { attributions, loading, refetch } = useAttributions();
+  const { devices } = useDevices();
+  const { beneficiaries } = useBeneficiaries();
+
+  const [showModal, setShowModal] = useState(false);
+  const [deviceId, setDeviceId] = useState<number | "">("");
+  const [beneficiaryId, setBeneficiaryId] = useState<number | "">("");
+  const [cessionType, setCessionType] = useState<CessionType>("donation");
+  const [price, setPrice] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const readyDevices = devices.filter((d) => d.status === "ready");
+
+  const resetForm = () => {
+    setDeviceId("");
+    setBeneficiaryId("");
+    setCessionType("donation");
+    setPrice("");
+    setError("");
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    resetForm();
+  };
+
+  const handleSubmit = async () => {
+    if (!deviceId || !beneficiaryId) {
+      setError("Veuillez sélectionner un appareil et un bénéficiaire.");
+      return;
+    }
+    if (cessionType === "cession" && !price) {
+      setError("Veuillez indiquer un prix pour la cession.");
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      await createAttribution({
+        device_id: Number(deviceId),
+        beneficiary_id: Number(beneficiaryId),
+        cession_type: cessionType,
+        price: cessionType === "cession" ? Number(price) : 0,
+      });
+      await refetch();
+      handleClose();
+    } catch (err) {
+      console.error(err);
+      setError("Une erreur est survenue. Réessayez.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const totalDonations = attributions.filter(
     (a) => a.cession_type === "donation",
@@ -26,7 +87,25 @@ const AttributionsPage = () => {
   }
 
   return (
-    <PageLayout title="Attributions" subtitle="Historique des attributions">
+    <PageLayout
+      title="Attributions"
+      subtitle="Historique des attributions"
+      actions={
+        <button
+          type="button"
+          className="topbar__btn topbar__btn--primary"
+          onClick={() => setShowModal(true)}
+          disabled={readyDevices.length === 0}
+          title={
+            readyDevices.length === 0
+              ? "Aucun appareil prêt à attribuer"
+              : undefined
+          }
+        >
+          <Plus size={15} /> Nouvelle attribution
+        </button>
+      }
+    >
       <div className="attributions">
         {/* STATS */}
         <div className="attributions__stats">
@@ -152,6 +231,145 @@ const AttributionsPage = () => {
           )}
         </div>
       </div>
+
+      {showModal && (
+        <Modal
+          title="Nouvelle attribution"
+          icon={<ArrowLeftRight size={20} />}
+          onClose={handleClose}
+          footer={
+            <>
+              <button
+                type="button"
+                className="beneficiaries__modal-cancel"
+                onClick={handleClose}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className="beneficiaries__modal-submit"
+                onClick={handleSubmit}
+                disabled={submitting || !deviceId || !beneficiaryId}
+              >
+                {submitting ? "Enregistrement..." : "Attribuer"}
+              </button>
+            </>
+          }
+        >
+          {error && (
+            <div
+              style={{
+                color: "var(--color-danger)",
+                fontSize: 13,
+                background: "var(--color-danger-pale)",
+                padding: "8px 12px",
+                borderRadius: "var(--radius-sm)",
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
+
+          <div className="beneficiaries__modal-field">
+            <label
+              htmlFor="attr-device"
+              className="beneficiaries__modal-label beneficiaries__modal-label--required"
+            >
+              Appareil à attribuer
+            </label>
+            <select
+              id="attr-device"
+              className="beneficiaries__modal-select"
+              value={deviceId}
+              onChange={(e) => setDeviceId(Number(e.target.value))}
+            >
+              <option value="">Sélectionner un appareil…</option>
+              {readyDevices.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.brand} {d.model} — {d.type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="beneficiaries__modal-field">
+            <label
+              htmlFor="attr-beneficiary"
+              className="beneficiaries__modal-label beneficiaries__modal-label--required"
+            >
+              Bénéficiaire
+            </label>
+            <select
+              id="attr-beneficiary"
+              className="beneficiaries__modal-select"
+              value={beneficiaryId}
+              onChange={(e) => setBeneficiaryId(Number(e.target.value))}
+            >
+              <option value="">Sélectionner un bénéficiaire…</option>
+              {beneficiaries.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.firstname ? `${b.firstname} ${b.name}` : b.name} —{" "}
+                  {b.structure_type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="beneficiaries__modal-field">
+            <div className="beneficiaries__modal-label beneficiaries__modal-label--required">
+              Type de cession
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              {(["donation", "cession"] as CessionType[]).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setCessionType(type)}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    borderRadius: "var(--radius-sm)",
+                    border: `1.5px solid ${cessionType === type ? "var(--color-text)" : "var(--color-border)"}`,
+                    background:
+                      cessionType === type
+                        ? "var(--color-ardoise-50)"
+                        : "transparent",
+                    fontWeight: cessionType === type ? 600 : 400,
+                    fontSize: 13,
+                    cursor: "pointer",
+                  }}
+                >
+                  {type === "donation"
+                    ? "🎁 Don gratuit"
+                    : "🤝 Cession solidaire"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {cessionType === "cession" && (
+            <div className="beneficiaries__modal-field">
+              <label
+                htmlFor="attr-price"
+                className="beneficiaries__modal-label beneficiaries__modal-label--required"
+              >
+                Participation demandée (€)
+              </label>
+              <input
+                id="attr-price"
+                className="beneficiaries__modal-input"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="ex. 20.00"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </div>
+          )}
+        </Modal>
+      )}
     </PageLayout>
   );
 };

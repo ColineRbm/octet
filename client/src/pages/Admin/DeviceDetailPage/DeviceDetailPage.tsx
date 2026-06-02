@@ -1,16 +1,8 @@
-import {
-  ArrowLeftRight,
-  Laptop,
-  Package,
-  Shield,
-  Stethoscope,
-  Wrench,
-} from "lucide-react";
+import { Laptop, Package, Shield, Stethoscope, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { LoadingState, StatusBadge } from "../../../components/ui";
-import { DeviceIcon } from "../../../components/ui";
+import { DeviceIcon, LoadingState, StatusBadge } from "../../../components/ui";
 import { TYPE_LABELS } from "../../../constants/device.constants";
 import { getDevice } from "../../../services/api";
 import type { Device } from "../../../types";
@@ -67,7 +59,7 @@ const buildTimeline = (device: Device) => {
 
   if (device.status === "attributed") {
     items.push({
-      icon: <ArrowLeftRight size={15} />,
+      icon: <Shield size={15} />,
       bg: "#E8F4EE",
       color: "#1A7A45",
       title: "Attribué",
@@ -92,7 +84,6 @@ const buildTimeline = (device: Device) => {
 
 const DeviceDetailPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [device, setDevice] = useState<Device | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -136,17 +127,6 @@ const DeviceDetailPage = () => {
     <PageLayout
       title={`${device.brand} ${device.model ?? ""}`}
       subtitle={`Appareils → Détail · #${String(device.id).padStart(4, "0")}`}
-      actions={
-        device.status === "ready" ? (
-          <button
-            type="button"
-            className="topbar__btn topbar__btn--primary"
-            onClick={() => navigate("/admin/attributions")}
-          >
-            <ArrowLeftRight size={15} /> Attribuer
-          </button>
-        ) : undefined
-      }
     >
       <div className="device-detail">
         {/* HERO */}
@@ -263,24 +243,6 @@ const DeviceDetailPage = () => {
 
           {/* RIGHT */}
           <div className="device-detail__right">
-            {device.status === "ready" && (
-              <div className="device-detail__cta">
-                <div className="device-detail__cta-title">
-                  Prêt à être attribué !
-                </div>
-                <div className="device-detail__cta-sub">
-                  Cet appareil a passé toutes les étapes de contrôle qualité.
-                </div>
-                <button
-                  type="button"
-                  className="device-detail__cta-btn"
-                  onClick={() => navigate("/admin/attributions")}
-                >
-                  <ArrowLeftRight size={15} /> Attribuer maintenant
-                </button>
-              </div>
-            )}
-
             <div className="device-detail__mini-card">
               {[
                 {
