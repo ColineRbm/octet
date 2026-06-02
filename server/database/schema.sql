@@ -64,7 +64,7 @@ CREATE TABLE attribution (
 
 -- Test data
 INSERT INTO user (firstname, lastname, email, password_hash, role) VALUES
-('Sophie', 'Martin', 'sophie.martin@octet.fr', '$argon2id$v=19$m=65536,t=3,p=4$khallG/CUseZSzk8/3Vu+w$7WQewrewCeJkvKs2rZ6119PhX7yEpicDAxgeN14sR7U', 'admin'),
+('Admin', 'Octet', 'admin@octet.fr', '$argon2id$v=19$m=65536,t=3,p=4$khallG/CUseZSzk8/3Vu+w$7WQewrewCeJkvKs2rZ6119PhX7yEpicDAxgeN14sR7U', 'admin'),
 ('Marie', 'Lambert', 'marie.lambert@octet.fr', '$argon2id$v=19$m=65536,t=3,p=4$khallG/CUseZSzk8/3Vu+w$7WQewrewCeJkvKs2rZ6119PhX7yEpicDAxgeN14sR7U', 'benevole'),
 ('Thomas', 'Renard', 'thomas.renard@octet.fr', '$argon2id$v=19$m=65536,t=3,p=4$khallG/CUseZSzk8/3Vu+w$7WQewrewCeJkvKs2rZ6119PhX7yEpicDAxgeN14sR7U', 'benevole');
 
