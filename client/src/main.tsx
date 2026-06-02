@@ -8,10 +8,10 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 import App from "./App";
 import AddDevicePage from "./pages/Admin/AddDevicePage/AddDevicePage";
-import DeviceDetailPage from "./pages/Admin/DeviceDetailPage/DeviceDetailPage";
-import AttributionsPage from "./pages/Admin/AttributionsPage";
+import AttributionsPage from "./pages/Admin/AttributionsPage/AttributionsPage";
 import BeneficiariesPage from "./pages/Admin/BeneficiariesPage";
 import DashboardAdminPage from "./pages/Admin/DashboardAdminPage/DashboardAdminPage";
+import DeviceDetailPage from "./pages/Admin/DeviceDetailPage/DeviceDetailPage";
 import DevicesPage from "./pages/Admin/DevicesPage/DevicesPage";
 import UsersPage from "./pages/Admin/UsersPage";
 import DashboardBenevolePage from "./pages/Benevole/DashboardBenevolePage";

@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import {
   ArrowLeftRight,
   Laptop,
@@ -10,6 +8,8 @@ import {
   Tablet,
   Wrench,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { getDevice } from "../../../services/api";
 import "./DeviceDetailPage.css";
