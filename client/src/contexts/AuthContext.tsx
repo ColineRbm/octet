@@ -1,43 +1,27 @@
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { login as apiLogin } from "../services/api";
+import type { AuthContextType, AuthUser } from "../types";
 
-// Define the user type
-interface User {
-  id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  role: "admin" | "benevole";
-}
-
-// Define the context type
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-// Create the context
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Create the provider
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem("user");
+      return null;
+    }
   });
 
   const isAuthenticated = user !== null;
 
   const login = async (email: string, password: string) => {
     const data = await apiLogin(email, password);
-
-    // Store token and user in localStorage
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
-
     setUser(data.user);
   };
 
@@ -54,7 +38,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === null) {

@@ -1,9 +1,9 @@
+import type { AuthUser, Device } from "../types";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3310";
 
-// Get token from localStorage
 const getToken = () => localStorage.getItem("token");
 
-// Generic fetch function with auth header
 const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = getToken();
 
@@ -20,7 +20,6 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     throw new Error(`HTTP error: ${response.status}`);
   }
 
-  // Return null for 204 No Content
   if (response.status === 204) {
     return null;
   }
@@ -29,7 +28,10 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
 };
 
 // Auth
-export const login = (email: string, password: string) =>
+export const login = (
+  email: string,
+  password: string,
+): Promise<{ token: string; user: AuthUser }> =>
   apiFetch("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -38,11 +40,19 @@ export const login = (email: string, password: string) =>
 // Devices
 export const getDevices = () => apiFetch("/api/devices");
 export const getDevice = (id: number) => apiFetch(`/api/devices/${id}`);
-export const createDevice = (device: object) =>
+export const getMyDevices = () => apiFetch("/api/devices/my");
+
+export const createDevice = (
+  device: Omit<
+    Device,
+    "id" | "created_at" | "added_by_user_id" | "assigned_to_user_id"
+  >,
+) =>
   apiFetch("/api/devices", {
     method: "POST",
     body: JSON.stringify(device),
   });
+
 export const updateDeviceStatus = (
   id: number,
   status: string,
@@ -52,10 +62,6 @@ export const updateDeviceStatus = (
     method: "PUT",
     body: JSON.stringify({ status, assigned_to_user_id }),
   });
-export const deleteDevice = (id: number) =>
-  apiFetch(`/api/devices/${id}`, { method: "DELETE" });
-
-export const getMyDevices = () => apiFetch("/api/devices/my");
 
 export const updateDeviceNotes = (id: number, notes: string) =>
   apiFetch(`/api/devices/${id}/notes`, {
@@ -63,14 +69,23 @@ export const updateDeviceNotes = (id: number, notes: string) =>
     body: JSON.stringify({ notes }),
   });
 
+export const deleteDevice = (id: number) =>
+  apiFetch(`/api/devices/${id}`, { method: "DELETE" });
+
 // Users
 export const getUsers = () => apiFetch("/api/users");
-export const getUser = (id: number) => apiFetch(`/api/users/${id}`);
-export const createUser = (user: object) =>
+
+export const createUser = (user: {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}) =>
   apiFetch("/api/users", {
     method: "POST",
     body: JSON.stringify(user),
   });
+
 export const updateUserStatus = (id: number, is_active: boolean) =>
   apiFetch(`/api/users/${id}/status`, {
     method: "PUT",
@@ -79,9 +94,14 @@ export const updateUserStatus = (id: number, is_active: boolean) =>
 
 // Beneficiaries
 export const getBeneficiaries = () => apiFetch("/api/beneficiaries");
-export const getBeneficiary = (id: number) =>
-  apiFetch(`/api/beneficiaries/${id}`);
-export const createBeneficiary = (beneficiary: object) =>
+
+export const createBeneficiary = (beneficiary: {
+  name: string;
+  firstname: string | null;
+  structure_type: string;
+  contact: string | null;
+  address: string | null;
+}) =>
   apiFetch("/api/beneficiaries", {
     method: "POST",
     body: JSON.stringify(beneficiary),
@@ -89,9 +109,14 @@ export const createBeneficiary = (beneficiary: object) =>
 
 // Attributions
 export const getAttributions = () => apiFetch("/api/attributions");
-export const getAttribution = (id: number) =>
-  apiFetch(`/api/attributions/${id}`);
-export const createAttribution = (attribution: object) =>
+
+export const createAttribution = (attribution: {
+  device_id: number;
+  beneficiary_id: number;
+  cession_type: "donation" | "cession";
+  price?: number;
+  notes?: string | null;
+}) =>
   apiFetch("/api/attributions", {
     method: "POST",
     body: JSON.stringify(attribution),
