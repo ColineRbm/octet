@@ -2,62 +2,36 @@ import { Laptop, Monitor, Plus, Tablet } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
+import {
+  STATUS_CONFIG,
+  TYPE_LABELS,
+} from "../../../constants/device.constants";
 import { createDevice } from "../../../services/api";
+import type { DeviceStatus, DeviceType } from "../../../types";
 import "./AddDevicePage.css";
 
-const STATUS_OPTIONS = [
-  {
-    value: "to_sort",
-    label: "À trier",
-    sub: "Arrivée standard",
-    color: "#6A6660",
-  },
-  {
-    value: "diagnosing",
-    label: "Diagnostic",
-    sub: "Examen en cours",
-    color: "#1C2B3A",
-  },
-  {
-    value: "repairing",
-    label: "Réparation",
-    sub: "Pièces connues",
-    color: "#A06010",
-  },
-  { value: "ready", label: "À attribuer", sub: "Bon état", color: "#1A7A45" },
-  {
-    value: "unusable",
-    label: "Hors service",
-    sub: "Irrécupérable",
-    color: "#A32D2D",
-  },
+const TYPE_OPTIONS: {
+  value: DeviceType;
+  icon: React.ReactElement;
+  sub: string;
+}[] = [
+  { value: "laptop", icon: <Laptop size={22} />, sub: "Laptop, notebook" },
+  { value: "desktop", icon: <Monitor size={22} />, sub: "Tour, tout-en-un" },
+  { value: "tablet", icon: <Tablet size={22} />, sub: "iPad, Android" },
 ];
 
-const TYPE_OPTIONS = [
-  {
-    value: "laptop",
-    label: "Ordinateur portable",
-    sub: "Laptop, notebook",
-    icon: <Laptop size={22} />,
-  },
-  {
-    value: "desktop",
-    label: "Ordinateur fixe",
-    sub: "Tour, tout-en-un",
-    icon: <Monitor size={22} />,
-  },
-  {
-    value: "tablet",
-    label: "Tablette",
-    sub: "iPad, Android",
-    icon: <Tablet size={22} />,
-  },
+const STATUS_OPTIONS: DeviceStatus[] = [
+  "to_sort",
+  "diagnosing",
+  "repairing",
+  "ready",
+  "unusable",
 ];
 
 const AddDevicePage = () => {
   const navigate = useNavigate();
 
-  const [type, setType] = useState<"laptop" | "desktop" | "tablet">("laptop");
+  const [type, setType] = useState<DeviceType>("laptop");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [receivedAt, setReceivedAt] = useState(
@@ -68,12 +42,12 @@ const AddDevicePage = () => {
   const [generalCondition, setGeneralCondition] = useState("");
   const [accessories, setAccessories] = useState("");
   const [notes, setNotes] = useState("");
-  const [status, setStatus] = useState("to_sort");
+  const [status, setStatus] = useState<DeviceStatus>("to_sort");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const selectedType = TYPE_OPTIONS.find((t) => t.value === type);
-  const selectedStatus = STATUS_OPTIONS.find((s) => s.value === status);
+  const selectedStatus = STATUS_CONFIG[status];
 
   const handleSubmit = async () => {
     if (!brand) {
@@ -82,7 +56,6 @@ const AddDevicePage = () => {
     }
     setError("");
     setLoading(true);
-
     try {
       await createDevice({
         type,
@@ -125,13 +98,13 @@ const AddDevicePage = () => {
                     key={t.value}
                     type="button"
                     className={`add-device__type-card${type === t.value ? " add-device__type-card--active" : ""}`}
-                    onClick={() =>
-                      setType(t.value as "laptop" | "desktop" | "tablet")
-                    }
+                    onClick={() => setType(t.value)}
                   >
                     <div className="add-device__type-icon">{t.icon}</div>
                     <div>
-                      <div className="add-device__type-label">{t.label}</div>
+                      <div className="add-device__type-label">
+                        {TYPE_LABELS[t.value]}
+                      </div>
                       <div className="add-device__type-sub">{t.sub}</div>
                     </div>
                   </button>
@@ -178,6 +151,7 @@ const AddDevicePage = () => {
                   />
                 </div>
               </div>
+
               <div className="add-device__field-row add-device__field-row--three">
                 <div className="add-device__field">
                   <label
@@ -196,7 +170,7 @@ const AddDevicePage = () => {
                 </div>
                 <div className="add-device__field">
                   <label htmlFor="serial-number" className="add-device__label">
-                    Numéro de série
+                    N° de série
                   </label>
                   <input
                     id="serial-number"
@@ -232,24 +206,28 @@ const AddDevicePage = () => {
             </div>
             <div className="add-device__section-body">
               <div className="add-device__status-grid">
-                {STATUS_OPTIONS.map((s) => (
-                  <button
-                    key={s.value}
-                    type="button"
-                    className={`add-device__status-pill${status === s.value ? " add-device__status-pill--active" : ""}`}
-                    style={status === s.value ? { borderColor: s.color } : {}}
-                    onClick={() => setStatus(s.value)}
-                  >
-                    <div
-                      className="add-device__status-dot"
-                      style={{ background: s.color }}
-                    />
-                    <div>
-                      <div className="add-device__status-label">{s.label}</div>
-                      <div className="add-device__status-sub">{s.sub}</div>
-                    </div>
-                  </button>
-                ))}
+                {STATUS_OPTIONS.map((s) => {
+                  const config = STATUS_CONFIG[s];
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      className={`add-device__status-pill${status === s ? " add-device__status-pill--active" : ""}`}
+                      style={status === s ? { borderColor: config.color } : {}}
+                      onClick={() => setStatus(s)}
+                    >
+                      <div
+                        className="add-device__status-dot"
+                        style={{ background: config.color }}
+                      />
+                      <div>
+                        <div className="add-device__status-label">
+                          {config.label}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -316,7 +294,6 @@ const AddDevicePage = () => {
             </div>
           </div>
 
-          {/* ERROR */}
           {error && (
             <div
               style={{
@@ -346,42 +323,34 @@ const AddDevicePage = () => {
                 {brand || "Nouvel appareil"} {model}
               </div>
               <div className="add-device__recap-device-sub">
-                {selectedType?.label}
+                {TYPE_LABELS[type]}
               </div>
             </div>
           </div>
 
           <div className="add-device__recap-body">
-            <div className="add-device__recap-item">
-              <span className="add-device__recap-key">Type</span>
-              <span className="add-device__recap-val">
-                {selectedType?.label}
-              </span>
-            </div>
-            <div className="add-device__recap-item">
-              <span className="add-device__recap-key">Marque</span>
-              <span
-                className={`add-device__recap-val${!brand ? " add-device__recap-val--muted" : ""}`}
-              >
-                {brand || "Non renseigné"}
-              </span>
-            </div>
-            <div className="add-device__recap-item">
-              <span className="add-device__recap-key">Modèle</span>
-              <span
-                className={`add-device__recap-val${!model ? " add-device__recap-val--muted" : ""}`}
-              >
-                {model || "Non renseigné"}
-              </span>
-            </div>
+            {[
+              { key: "Type", val: TYPE_LABELS[type] },
+              { key: "Marque", val: brand || null },
+              { key: "Modèle", val: model || null },
+            ].map(({ key, val }) => (
+              <div key={key} className="add-device__recap-item">
+                <span className="add-device__recap-key">{key}</span>
+                <span
+                  className={`add-device__recap-val${!val ? " add-device__recap-val--muted" : ""}`}
+                >
+                  {val || "Non renseigné"}
+                </span>
+              </div>
+            ))}
             <hr className="add-device__recap-divider" />
             <div className="add-device__recap-item">
               <span className="add-device__recap-key">Statut initial</span>
               <span
                 className="add-device__recap-val"
-                style={{ color: selectedStatus?.color }}
+                style={{ color: selectedStatus.color }}
               >
-                {selectedStatus?.label}
+                {selectedStatus.label}
               </span>
             </div>
             <div className="add-device__recap-item">

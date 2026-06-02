@@ -1,48 +1,11 @@
-import { ArrowLeftRight, Laptop, Monitor, Tablet } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeftRight } from "lucide-react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { getAttributions } from "../../../services/api";
+import { DeviceIcon, EmptyState, LoadingState } from "../../../components/ui";
+import { useAttributions } from "../../../hooks";
 import "./AttributionsPage.css";
 
-interface Attribution {
-  id: number;
-  cession_type: "donation" | "cession";
-  price: string;
-  attributed_at: string;
-  notes: string | null;
-  brand: string;
-  model: string;
-  device_type: "desktop" | "laptop" | "tablet";
-  beneficiary_name: string;
-  beneficiary_firstname: string | null;
-  structure_type: string;
-  attributed_by_firstname: string;
-  attributed_by_lastname: string;
-}
-
-const TYPE_ICONS = {
-  desktop: <Monitor size={15} />,
-  laptop: <Laptop size={15} />,
-  tablet: <Tablet size={15} />,
-};
-
 const AttributionsPage = () => {
-  const [attributions, setAttributions] = useState<Attribution[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAttributions = async () => {
-      try {
-        const data = await getAttributions();
-        setAttributions(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAttributions();
-  }, []);
+  const { attributions, loading } = useAttributions();
 
   const totalDonations = attributions.filter(
     (a) => a.cession_type === "donation",
@@ -57,7 +20,7 @@ const AttributionsPage = () => {
   if (loading) {
     return (
       <PageLayout title="Attributions" subtitle="Historique des attributions">
-        <div className="attributions__loading">Chargement...</div>
+        <LoadingState />
       </PageLayout>
     );
   }
@@ -111,13 +74,10 @@ const AttributionsPage = () => {
           </div>
 
           {attributions.length === 0 ? (
-            <div className="attributions__empty">
-              <ArrowLeftRight
-                size={36}
-                style={{ color: "var(--color-border)" }}
-              />
-              <div>Aucune attribution pour l'instant</div>
-            </div>
+            <EmptyState
+              icon={<ArrowLeftRight size={36} />}
+              message="Aucune attribution pour l'instant"
+            />
           ) : (
             <table className="attributions__table">
               <thead>
@@ -136,7 +96,7 @@ const AttributionsPage = () => {
                     <td>
                       <div className="attributions__device-cell">
                         <div className="attributions__device-icon">
-                          {TYPE_ICONS[attr.device_type]}
+                          <DeviceIcon type={attr.device_type} size={15} />
                         </div>
                         <div>
                           <div className="attributions__device-name">

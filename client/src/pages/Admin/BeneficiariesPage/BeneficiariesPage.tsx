@@ -7,22 +7,14 @@ import {
   MapPin,
   Plus,
   Users,
-  X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { createBeneficiary, getBeneficiaries } from "../../../services/api";
+import { EmptyState, LoadingState, Modal } from "../../../components/ui";
+import { useBeneficiaries } from "../../../hooks";
+import { createBeneficiary } from "../../../services/api";
+import type { StructureType } from "../../../types";
 import "./BeneficiariesPage.css";
-
-interface Beneficiary {
-  id: number;
-  name: string;
-  firstname: string | null;
-  structure_type: "family" | "school" | "association" | "other";
-  contact: string | null;
-  address: string | null;
-  created_at: string;
-}
 
 const STRUCTURE_CONFIG = {
   family: {
@@ -48,33 +40,27 @@ const STRUCTURE_CONFIG = {
 };
 
 const BeneficiariesPage = () => {
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { beneficiaries, loading, refetch } = useBeneficiaries();
   const [showModal, setShowModal] = useState(false);
 
-  // Form state
   const [name, setName] = useState("");
   const [firstname, setFirstname] = useState("");
-  const [structureType, setStructureType] = useState<
-    "family" | "school" | "association" | "other"
-  >("family");
+  const [structureType, setStructureType] = useState<StructureType>("family");
   const [contact, setContact] = useState("");
   const [address, setAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchBeneficiaries();
-  }, []);
+  const resetForm = () => {
+    setName("");
+    setFirstname("");
+    setStructureType("family");
+    setContact("");
+    setAddress("");
+  };
 
-  const fetchBeneficiaries = async () => {
-    try {
-      const data = await getBeneficiaries();
-      setBeneficiaries(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleClose = () => {
+    setShowModal(false);
+    resetForm();
   };
 
   const handleSubmit = async () => {
@@ -88,9 +74,8 @@ const BeneficiariesPage = () => {
         contact: contact || null,
         address: address || null,
       });
-      await fetchBeneficiaries();
-      setShowModal(false);
-      resetForm();
+      await refetch();
+      handleClose();
     } catch (err) {
       console.error(err);
     } finally {
@@ -98,18 +83,10 @@ const BeneficiariesPage = () => {
     }
   };
 
-  const resetForm = () => {
-    setName("");
-    setFirstname("");
-    setStructureType("family");
-    setContact("");
-    setAddress("");
-  };
-
   if (loading) {
     return (
       <PageLayout title="Bénéficiaires" subtitle="Gestion des bénéficiaires">
-        <div className="beneficiaries__loading">Chargement...</div>
+        <LoadingState />
       </PageLayout>
     );
   }
@@ -130,10 +107,10 @@ const BeneficiariesPage = () => {
     >
       <div className="beneficiaries">
         {beneficiaries.length === 0 ? (
-          <div className="beneficiaries__empty">
-            <Users size={36} style={{ color: "var(--color-border)" }} />
-            <div>Aucun bénéficiaire pour l'instant</div>
-          </div>
+          <EmptyState
+            icon={<Users size={36} />}
+            message="Aucun bénéficiaire pour l'instant"
+          />
         ) : (
           <div className="beneficiaries__grid">
             {beneficiaries.map((b) => {
@@ -153,24 +130,19 @@ const BeneficiariesPage = () => {
                       </span>
                     </div>
                   </div>
-
                   <hr className="beneficiaries__divider" />
-
                   <div className="beneficiaries__info">
                     {b.contact && (
                       <div className="beneficiaries__info-row">
-                        <Mail size={12} />
-                        {b.contact}
+                        <Mail size={12} /> {b.contact}
                       </div>
                     )}
                     {b.address && (
                       <div className="beneficiaries__info-row">
-                        <MapPin size={12} />
-                        {b.address}
+                        <MapPin size={12} /> {b.address}
                       </div>
                     )}
                   </div>
-
                   <div className="beneficiaries__footer">
                     Ajouté le{" "}
                     {new Date(b.created_at).toLocaleDateString("fr-FR")}
@@ -182,137 +154,17 @@ const BeneficiariesPage = () => {
         )}
       </div>
 
-      {/* MODAL */}
       {showModal && (
-        <div className="beneficiaries__modal-overlay">
-          <div className="beneficiaries__modal">
-            <div className="beneficiaries__modal-head">
-              <div className="beneficiaries__modal-head-icon">
-                <Heart size={20} />
-              </div>
-              <span className="beneficiaries__modal-title">
-                Ajouter un bénéficiaire
-              </span>
-              <button
-                type="button"
-                className="beneficiaries__modal-close"
-                onClick={() => {
-                  setShowModal(false);
-                  resetForm();
-                }}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="beneficiaries__modal-body">
-              <div className="beneficiaries__modal-field">
-                <label
-                  htmlFor="structure-type"
-                  className="beneficiaries__modal-label beneficiaries__modal-label--required"
-                >
-                  Type de bénéficiaire
-                </label>
-                <select
-                  id="structure-type"
-                  className="beneficiaries__modal-select"
-                  value={structureType}
-                  onChange={(e) =>
-                    setStructureType(
-                      e.target.value as
-                        | "family"
-                        | "school"
-                        | "association"
-                        | "other",
-                    )
-                  }
-                >
-                  <option value="family">Famille</option>
-                  <option value="school">École</option>
-                  <option value="association">Association</option>
-                  <option value="other">Autre</option>
-                </select>
-              </div>
-
-              <div className="beneficiaries__modal-row">
-                <div className="beneficiaries__modal-field">
-                  <label
-                    htmlFor="ben-firstname"
-                    className="beneficiaries__modal-label"
-                  >
-                    Prénom
-                  </label>
-                  <input
-                    id="ben-firstname"
-                    className="beneficiaries__modal-input"
-                    type="text"
-                    placeholder="ex. Claire"
-                    value={firstname}
-                    onChange={(e) => setFirstname(e.target.value)}
-                  />
-                </div>
-                <div className="beneficiaries__modal-field">
-                  <label
-                    htmlFor="ben-name"
-                    className="beneficiaries__modal-label beneficiaries__modal-label--required"
-                  >
-                    Nom / Structure
-                  </label>
-                  <input
-                    id="ben-name"
-                    className="beneficiaries__modal-input"
-                    type="text"
-                    placeholder="ex. Dupont ou École Jean Moulin"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="beneficiaries__modal-row">
-                <div className="beneficiaries__modal-field">
-                  <label
-                    htmlFor="ben-contact"
-                    className="beneficiaries__modal-label"
-                  >
-                    Contact
-                  </label>
-                  <input
-                    id="ben-contact"
-                    className="beneficiaries__modal-input"
-                    type="text"
-                    placeholder="Email ou téléphone"
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                  />
-                </div>
-                <div className="beneficiaries__modal-field">
-                  <label
-                    htmlFor="ben-address"
-                    className="beneficiaries__modal-label"
-                  >
-                    Adresse
-                  </label>
-                  <input
-                    id="ben-address"
-                    className="beneficiaries__modal-input"
-                    type="text"
-                    placeholder="Ville ou adresse"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="beneficiaries__modal-footer">
+        <Modal
+          title="Ajouter un bénéficiaire"
+          icon={<Heart size={20} />}
+          onClose={handleClose}
+          footer={
+            <>
               <button
                 type="button"
                 className="beneficiaries__modal-cancel"
-                onClick={() => {
-                  setShowModal(false);
-                  resetForm();
-                }}
+                onClick={handleClose}
               >
                 Annuler
               </button>
@@ -324,9 +176,101 @@ const BeneficiariesPage = () => {
               >
                 {submitting ? "Enregistrement..." : "Ajouter"}
               </button>
+            </>
+          }
+        >
+          <div className="beneficiaries__modal-field">
+            <label
+              htmlFor="structure-type"
+              className="beneficiaries__modal-label beneficiaries__modal-label--required"
+            >
+              Type de bénéficiaire
+            </label>
+            <select
+              id="structure-type"
+              className="beneficiaries__modal-select"
+              value={structureType}
+              onChange={(e) =>
+                setStructureType(e.target.value as StructureType)
+              }
+            >
+              <option value="family">Famille</option>
+              <option value="school">École</option>
+              <option value="association">Association</option>
+              <option value="other">Autre</option>
+            </select>
+          </div>
+
+          <div className="beneficiaries__modal-row">
+            <div className="beneficiaries__modal-field">
+              <label
+                htmlFor="ben-firstname"
+                className="beneficiaries__modal-label"
+              >
+                Prénom
+              </label>
+              <input
+                id="ben-firstname"
+                className="beneficiaries__modal-input"
+                type="text"
+                placeholder="ex. Claire"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+              />
+            </div>
+            <div className="beneficiaries__modal-field">
+              <label
+                htmlFor="ben-name"
+                className="beneficiaries__modal-label beneficiaries__modal-label--required"
+              >
+                Nom / Structure
+              </label>
+              <input
+                id="ben-name"
+                className="beneficiaries__modal-input"
+                type="text"
+                placeholder="ex. Dupont ou École Jean Moulin"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
           </div>
-        </div>
+
+          <div className="beneficiaries__modal-row">
+            <div className="beneficiaries__modal-field">
+              <label
+                htmlFor="ben-contact"
+                className="beneficiaries__modal-label"
+              >
+                Contact
+              </label>
+              <input
+                id="ben-contact"
+                className="beneficiaries__modal-input"
+                type="text"
+                placeholder="Email ou téléphone"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+              />
+            </div>
+            <div className="beneficiaries__modal-field">
+              <label
+                htmlFor="ben-address"
+                className="beneficiaries__modal-label"
+              >
+                Adresse
+              </label>
+              <input
+                id="ben-address"
+                className="beneficiaries__modal-input"
+                type="text"
+                placeholder="Ville ou adresse"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
+          </div>
+        </Modal>
       )}
     </PageLayout>
   );

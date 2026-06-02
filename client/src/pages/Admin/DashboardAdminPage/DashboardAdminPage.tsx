@@ -1,83 +1,37 @@
 import { ArrowLeftRight, Laptop, TrendingUp, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
+import { LoadingState } from "../../../components/ui";
+import { STATUS_CONFIG } from "../../../constants/device.constants";
 import {
-  getAttributions,
-  getBeneficiaries,
-  getDevices,
-  getUsers,
-} from "../../../services/api";
+  useAttributions,
+  useBeneficiaries,
+  useDevices,
+  useUsers,
+} from "../../../hooks";
 import "./DashboardAdminPage.css";
-
-interface Device {
-  id: number;
-  brand: string;
-  model: string;
-  type: string;
-  status: string;
-}
-
-interface User {
-  id: number;
-  firstname: string;
-  lastname: string;
-  is_active: number;
-}
-
-interface Attribution {
-  id: number;
-  brand: string;
-  model: string;
-  beneficiary_name: string;
-  cession_type: string;
-  attributed_at: string;
-  attributed_by_firstname: string;
-  attributed_by_lastname: string;
-}
-
-const STATUS_CONFIG = {
-  to_sort: { label: "À trier", color: "#6A6660" },
-  diagnosing: { label: "En diagnostic", color: "#1C2B3A" },
-  repairing: { label: "En réparation", color: "#EF9F27" },
-  quality_check: { label: "Contrôle N2", color: "#6B30A0" },
-  ready: { label: "À attribuer", color: "#1A7A45" },
-  attributed: { label: "Attribué", color: "#F4A261" },
-  unusable: { label: "Hors service", color: "#A32D2D" },
-};
 
 const DashboardAdminPage = () => {
   const navigate = useNavigate();
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [beneficiaries, setBeneficiaries] = useState<unknown[]>([]);
-  const [attributions, setAttributions] = useState<Attribution[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { devices, loading: loadingDevices } = useDevices();
+  const { users, loading: loadingUsers } = useUsers();
+  const { beneficiaries, loading: loadingBeneficiaries } = useBeneficiaries();
+  const { attributions, loading: loadingAttributions } = useAttributions();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [devicesData, usersData, beneficiariesData, attributionsData] =
-          await Promise.all([
-            getDevices(),
-            getUsers(),
-            getBeneficiaries(),
-            getAttributions(),
-          ]);
-        setDevices(devicesData);
-        setUsers(usersData);
-        setBeneficiaries(beneficiariesData);
-        setAttributions(attributionsData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const loading =
+    loadingDevices ||
+    loadingUsers ||
+    loadingBeneficiaries ||
+    loadingAttributions;
 
-  // Count devices by status
+  if (loading) {
+    return (
+      <PageLayout title="Tableau de bord" subtitle="Vue d'ensemble">
+        <LoadingState />
+      </PageLayout>
+    );
+  }
+
   const statusCounts = devices.reduce(
     (acc, device) => {
       acc[device.status] = (acc[device.status] || 0) + 1;
@@ -86,19 +40,8 @@ const DashboardAdminPage = () => {
     {} as Record<string, number>,
   );
 
-  // Devices ready to attribute
   const readyDevices = devices.filter((d) => d.status === "ready");
-
-  // Recent attributions (last 4)
   const recentAttributions = attributions.slice(0, 4);
-
-  if (loading) {
-    return (
-      <PageLayout title="Tableau de bord" subtitle="Vue d'ensemble">
-        <div className="dashboard__loading">Chargement...</div>
-      </PageLayout>
-    );
-  }
 
   return (
     <PageLayout
@@ -179,23 +122,20 @@ const DashboardAdminPage = () => {
             </div>
             <div className="dashboard__kpi-num">
               {users.filter((u) => u.is_active).length}
-            </div>{" "}
+            </div>
             <div className="dashboard__kpi-label">Bénévoles actifs</div>
           </div>
         </div>
 
         {/* MAIN GRID */}
         <div className="dashboard__grid">
-          {/* LEFT — Statuts + Activité */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {/* Répartition par statut */}
             <div className="dashboard__card">
               <div className="dashboard__card-head">
-                <div className="dashboard__card-head-left">
-                  <span className="dashboard__card-title">
-                    Répartition par statut
-                  </span>
-                </div>
+                <span className="dashboard__card-title">
+                  Répartition par statut
+                </span>
                 <button
                   type="button"
                   className="dashboard__card-link"
@@ -207,8 +147,7 @@ const DashboardAdminPage = () => {
               <div className="dashboard__card-body">
                 {Object.entries(STATUS_CONFIG).map(([key, config]) => {
                   const count = statusCounts[key] || 0;
-                  const total = devices.length || 1;
-                  const pct = Math.round((count / total) * 100);
+                  const pct = Math.round((count / (devices.length || 1)) * 100);
                   return (
                     <div key={key} className="dashboard__statut-row">
                       <div
@@ -231,14 +170,12 @@ const DashboardAdminPage = () => {
               </div>
             </div>
 
-            {/* Activité récente */}
+            {/* Attributions récentes */}
             <div className="dashboard__card">
               <div className="dashboard__card-head">
-                <div className="dashboard__card-head-left">
-                  <span className="dashboard__card-title">
-                    Attributions récentes
-                  </span>
-                </div>
+                <span className="dashboard__card-title">
+                  Attributions récentes
+                </span>
                 <button
                   type="button"
                   className="dashboard__card-link"
@@ -293,12 +230,10 @@ const DashboardAdminPage = () => {
             </div>
           </div>
 
-          {/* RIGHT — À attribuer */}
+          {/* Prêts à attribuer */}
           <div className="dashboard__card">
             <div className="dashboard__card-head">
-              <div className="dashboard__card-head-left">
-                <span className="dashboard__card-title">Prêts à attribuer</span>
-              </div>
+              <span className="dashboard__card-title">Prêts à attribuer</span>
               <span style={{ fontSize: 11, color: "var(--color-text-sub)" }}>
                 {readyDevices.length} appareil
                 {readyDevices.length > 1 ? "s" : ""}

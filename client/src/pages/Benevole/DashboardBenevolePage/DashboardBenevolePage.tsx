@@ -1,88 +1,35 @@
-import { useEffect, useState } from "react";
 import {
+  BarChart3,
   CheckCircle,
   History,
   Laptop,
   Leaf,
-  Monitor,
   Shield,
-  BarChart3,
   Stethoscope,
-  Tablet,
   Wrench,
   XCircle,
 } from "lucide-react";
+import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { useAuth } from "../../../contexts/AuthContext";
 import {
-  getDevices,
-  getMyDevices,
-  updateDeviceStatus,
-} from "../../../services/api";
+  DeviceIcon,
+  EmptyState,
+  LoadingState,
+  StatusBadge,
+} from "../../../components/ui";
+import { TYPE_LABELS } from "../../../constants/device.constants";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useMyDevices } from "../../../hooks";
+import { updateDeviceStatus } from "../../../services/api";
+import type { Device } from "../../../types";
 import "./DashboardBenevolePage.css";
-
-interface Device {
-  id: number;
-  type: "desktop" | "laptop" | "tablet";
-  brand: string;
-  model: string | null;
-  status: string;
-  received_at: string;
-  assigned_to_user_id: number | null;
-}
-
-const TYPE_ICONS = {
-  desktop: <Monitor size={18} />,
-  laptop: <Laptop size={18} />,
-  tablet: <Tablet size={18} />,
-};
-
-const TYPE_LABELS = {
-  desktop: "Ordinateur fixe",
-  laptop: "Ordinateur portable",
-  tablet: "Tablette",
-};
-
-const STATUS_CONFIG: Record<
-  string,
-  { label: string; color: string; bg: string }
-> = {
-  to_sort: { label: "À trier", color: "#6A6660", bg: "#F1EFE8" },
-  diagnosing: { label: "Diagnostic", color: "#1C2B3A", bg: "#E8EEF4" },
-  repairing: { label: "Réparation", color: "#A06010", bg: "#FEF3DC" },
-  quality_check: { label: "Contrôle N2", color: "#6B30A0", bg: "#F3E8FA" },
-  ready: { label: "À attribuer", color: "#1A7A45", bg: "#E8F4EE" },
-  attributed: { label: "Attribué", color: "#C04800", bg: "#FEF0E4" },
-  unusable: { label: "Hors service", color: "#A32D2D", bg: "#FDEDEC" },
-};
 
 type Tab = "file" | "history" | "stats";
 
 const DashboardBenevolePage = () => {
   const { user } = useAuth();
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [myDevices, setMyDevices] = useState<Device[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { devices, myDevices, loading, refetch } = useMyDevices();
   const [activeTab, setActiveTab] = useState<Tab>("file");
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  const fetchAll = async () => {
-    try {
-      const [allData, myData] = await Promise.all([
-        getDevices(),
-        getMyDevices(),
-      ]);
-      setDevices(allData);
-      setMyDevices(myData);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleStatusUpdate = async (
     deviceId: number,
@@ -91,13 +38,12 @@ const DashboardBenevolePage = () => {
   ) => {
     try {
       await updateDeviceStatus(deviceId, newStatus, assignedTo);
-      await fetchAll();
+      await refetch();
     } catch (err) {
       console.error(err);
     }
   };
 
-  // File de travail
   const toSort = devices.filter((d) => d.status === "to_sort");
   const myDiagnosing = devices.filter(
     (d) => d.status === "diagnosing" && d.assigned_to_user_id === user?.id,
@@ -108,13 +54,8 @@ const DashboardBenevolePage = () => {
   const availableQC = devices.filter(
     (d) => d.status === "quality_check" && d.assigned_to_user_id !== user?.id,
   );
+  const historyDevices = myDevices.filter((d) => d.status !== "to_sort");
 
-  // Historique — appareils traités (status != to_sort et assigned ou ajouté par moi)
-  const historyDevices = myDevices.filter(
-    (d) => !["to_sort"].includes(d.status),
-  );
-
-  // Stats
   const totalTreated = myDevices.length;
   const totalRepaired = myDevices.filter((d) =>
     ["ready", "attributed", "quality_check"].includes(d.status),
@@ -130,39 +71,46 @@ const DashboardBenevolePage = () => {
         title="Ma file de travail"
         subtitle="Tableau de bord bénévole"
       >
-        <div className="dashboard-benevole__loading">Chargement...</div>
+        <LoadingState />
       </PageLayout>
     );
   }
 
-  const renderDeviceRow = (device: Device, actions: React.ReactNode) => {
-    const statusConf = STATUS_CONFIG[device.status];
-    return (
-      <div key={device.id} className="dashboard-benevole__device-row">
-        <div className="dashboard-benevole__device-icon">
-          {TYPE_ICONS[device.type]}
-        </div>
-        <div className="dashboard-benevole__device-body">
-          <div className="dashboard-benevole__device-name">
-            {device.brand} {device.model}
-          </div>
-          <div className="dashboard-benevole__device-sub">
-            {TYPE_LABELS[device.type]}
-          </div>
-        </div>
-        {statusConf && (
-          <span
-            className="dashboard-benevole__badge"
-            style={{ background: statusConf.bg, color: statusConf.color }}
-          >
-            <span className="dashboard-benevole__badge-dot" />
-            {statusConf.label}
-          </span>
-        )}
-        <div className="dashboard-benevole__device-actions">{actions}</div>
+  const renderDeviceRow = (device: Device, actions: React.ReactNode) => (
+    <div key={device.id} className="dashboard-benevole__device-row">
+      <div className="dashboard-benevole__device-icon">
+        <DeviceIcon type={device.type} size={18} />
       </div>
-    );
-  };
+      <div className="dashboard-benevole__device-body">
+        <div className="dashboard-benevole__device-name">
+          {device.brand} {device.model}
+        </div>
+        <div className="dashboard-benevole__device-sub">
+          {TYPE_LABELS[device.type]}
+        </div>
+      </div>
+      <StatusBadge status={device.status} />
+      <div className="dashboard-benevole__device-actions">{actions}</div>
+    </div>
+  );
+
+  const renderCard = (
+    icon: React.ReactNode,
+    title: string,
+    count: number,
+    content: React.ReactNode,
+  ) => (
+    <div className="dashboard-benevole__card">
+      <div className="dashboard-benevole__card-head">
+        <div className="dashboard-benevole__card-head-left">
+          {icon}
+          <span className="dashboard-benevole__card-title">{title}</span>
+        </div>
+        <span className="dashboard-benevole__card-count">{count}</span>
+      </div>
+      <div className="dashboard-benevole__card-body">{content}</div>
+    </div>
+  );
 
   return (
     <PageLayout
@@ -231,229 +179,186 @@ const DashboardBenevolePage = () => {
 
         {/* TABS */}
         <div className="dashboard-benevole__tabs">
-          <button
-            type="button"
-            className={`dashboard-benevole__tab${activeTab === "file" ? " dashboard-benevole__tab--active" : ""}`}
-            onClick={() => setActiveTab("file")}
-          >
-            <Laptop size={14} /> Ma file (
-            {myDiagnosing.length + myRepairing.length + toSort.length})
-          </button>
-          <button
-            type="button"
-            className={`dashboard-benevole__tab${activeTab === "history" ? " dashboard-benevole__tab--active" : ""}`}
-            onClick={() => setActiveTab("history")}
-          >
-            <History size={14} /> Mon historique ({historyDevices.length})
-          </button>
-          <button
-            type="button"
-            className={`dashboard-benevole__tab${activeTab === "stats" ? " dashboard-benevole__tab--active" : ""}`}
-            onClick={() => setActiveTab("stats")}
-          >
-            <BarChart3 size={14} /> Mes stats
-          </button>
+          {(
+            [
+              {
+                id: "file",
+                icon: <Laptop size={14} />,
+                label: `Ma file (${myDiagnosing.length + myRepairing.length + toSort.length})`,
+              },
+              {
+                id: "history",
+                icon: <History size={14} />,
+                label: `Mon historique (${historyDevices.length})`,
+              },
+              {
+                id: "stats",
+                icon: <BarChart3 size={14} />,
+                label: "Mes stats",
+              },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`dashboard-benevole__tab${activeTab === tab.id ? " dashboard-benevole__tab--active" : ""}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* TAB — MA FILE */}
         {activeTab === "file" && (
           <div className="dashboard-benevole__grid">
-            <div className="dashboard-benevole__card">
-              <div className="dashboard-benevole__card-head">
-                <div className="dashboard-benevole__card-head-left">
-                  <Laptop size={15} />
-                  <span className="dashboard-benevole__card-title">
-                    Nouveaux arrivages
-                  </span>
-                </div>
-                <span className="dashboard-benevole__card-count">
-                  {toSort.length}
-                </span>
-              </div>
-              <div className="dashboard-benevole__card-body">
-                {toSort.length === 0 ? (
-                  <div className="dashboard-benevole__empty">
-                    <CheckCircle
-                      size={24}
-                      style={{ color: "var(--color-success)" }}
-                    />
-                    <div>Aucun appareil à trier</div>
-                  </div>
-                ) : (
-                  toSort.map((device) =>
-                    renderDeviceRow(
-                      device,
+            {renderCard(
+              <Laptop size={15} />,
+              "Nouveaux arrivages",
+              toSort.length,
+              toSort.length === 0 ? (
+                <EmptyState
+                  icon={<CheckCircle size={24} />}
+                  message="Aucun appareil à trier"
+                />
+              ) : (
+                toSort.map((device) =>
+                  renderDeviceRow(
+                    device,
+                    <button
+                      type="button"
+                      className="dashboard-benevole__action-btn dashboard-benevole__action-btn--primary"
+                      onClick={() =>
+                        handleStatusUpdate(
+                          device.id,
+                          "diagnosing",
+                          user?.id ?? null,
+                        )
+                      }
+                    >
+                      <Stethoscope size={12} /> Prendre en diagnostic
+                    </button>,
+                  ),
+                )
+              ),
+            )}
+
+            {renderCard(
+              <Stethoscope size={15} />,
+              "Mes diagnostics",
+              myDiagnosing.length,
+              myDiagnosing.length === 0 ? (
+                <EmptyState message="Aucun diagnostic en cours" />
+              ) : (
+                myDiagnosing.map((device) =>
+                  renderDeviceRow(
+                    device,
+                    <>
                       <button
                         type="button"
-                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--primary"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--success"
                         onClick={() =>
                           handleStatusUpdate(
                             device.id,
-                            "diagnosing",
+                            "repairing",
                             user?.id ?? null,
                           )
                         }
                       >
-                        <Stethoscope size={12} /> Prendre en diagnostic
-                      </button>,
-                    ),
-                  )
-                )}
-              </div>
-            </div>
+                        <Wrench size={12} /> Réparable
+                      </button>
+                      <button
+                        type="button"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
+                        onClick={() =>
+                          handleStatusUpdate(device.id, "unusable", null)
+                        }
+                      >
+                        <XCircle size={12} /> HS
+                      </button>
+                    </>,
+                  ),
+                )
+              ),
+            )}
 
-            <div className="dashboard-benevole__card">
-              <div className="dashboard-benevole__card-head">
-                <div className="dashboard-benevole__card-head-left">
-                  <Stethoscope size={15} />
-                  <span className="dashboard-benevole__card-title">
-                    Mes diagnostics
-                  </span>
-                </div>
-                <span className="dashboard-benevole__card-count">
-                  {myDiagnosing.length}
-                </span>
-              </div>
-              <div className="dashboard-benevole__card-body">
-                {myDiagnosing.length === 0 ? (
-                  <div className="dashboard-benevole__empty">
-                    <div>Aucun diagnostic en cours</div>
-                  </div>
-                ) : (
-                  myDiagnosing.map((device) =>
-                    renderDeviceRow(
-                      device,
-                      <>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--success"
-                          onClick={() =>
-                            handleStatusUpdate(
-                              device.id,
-                              "repairing",
-                              user?.id ?? null,
-                            )
-                          }
-                        >
-                          <Wrench size={12} /> Réparable
-                        </button>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
-                          onClick={() =>
-                            handleStatusUpdate(device.id, "unusable", null)
-                          }
-                        >
-                          <XCircle size={12} /> HS
-                        </button>
-                      </>,
-                    ),
-                  )
-                )}
-              </div>
-            </div>
+            {renderCard(
+              <Wrench size={15} />,
+              "Mes réparations",
+              myRepairing.length,
+              myRepairing.length === 0 ? (
+                <EmptyState message="Aucune réparation en cours" />
+              ) : (
+                myRepairing.map((device) =>
+                  renderDeviceRow(
+                    device,
+                    <>
+                      <button
+                        type="button"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--purple"
+                        onClick={() =>
+                          handleStatusUpdate(
+                            device.id,
+                            "quality_check",
+                            user?.id ?? null,
+                          )
+                        }
+                      >
+                        <Shield size={12} /> Réparé → N2
+                      </button>
+                      <button
+                        type="button"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
+                        onClick={() =>
+                          handleStatusUpdate(device.id, "unusable", null)
+                        }
+                      >
+                        <XCircle size={12} /> HS
+                      </button>
+                    </>,
+                  ),
+                )
+              ),
+            )}
 
-            <div className="dashboard-benevole__card">
-              <div className="dashboard-benevole__card-head">
-                <div className="dashboard-benevole__card-head-left">
-                  <Wrench size={15} />
-                  <span className="dashboard-benevole__card-title">
-                    Mes réparations
-                  </span>
-                </div>
-                <span className="dashboard-benevole__card-count">
-                  {myRepairing.length}
-                </span>
-              </div>
-              <div className="dashboard-benevole__card-body">
-                {myRepairing.length === 0 ? (
-                  <div className="dashboard-benevole__empty">
-                    <div>Aucune réparation en cours</div>
-                  </div>
-                ) : (
-                  myRepairing.map((device) =>
-                    renderDeviceRow(
-                      device,
-                      <>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--purple"
-                          onClick={() =>
-                            handleStatusUpdate(
-                              device.id,
-                              "quality_check",
-                              user?.id ?? null,
-                            )
-                          }
-                        >
-                          <Shield size={12} /> Réparé → N2
-                        </button>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
-                          onClick={() =>
-                            handleStatusUpdate(device.id, "unusable", null)
-                          }
-                        >
-                          <XCircle size={12} /> HS
-                        </button>
-                      </>,
-                    ),
-                  )
-                )}
-              </div>
-            </div>
-
-            <div className="dashboard-benevole__card">
-              <div className="dashboard-benevole__card-head">
-                <div className="dashboard-benevole__card-head-left">
-                  <Shield size={15} />
-                  <span className="dashboard-benevole__card-title">
-                    Contrôles N2
-                  </span>
-                </div>
-                <span className="dashboard-benevole__card-count">
-                  {availableQC.length}
-                </span>
-              </div>
-              <div className="dashboard-benevole__card-body">
-                {availableQC.length === 0 ? (
-                  <div className="dashboard-benevole__empty">
-                    <div>Aucun contrôle N2 disponible</div>
-                  </div>
-                ) : (
-                  availableQC.map((device) =>
-                    renderDeviceRow(
-                      device,
-                      <>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--success"
-                          onClick={() =>
-                            handleStatusUpdate(device.id, "ready", null)
-                          }
-                        >
-                          <CheckCircle size={12} /> Valider
-                        </button>
-                        <button
-                          type="button"
-                          className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
-                          onClick={() =>
-                            handleStatusUpdate(
-                              device.id,
-                              "repairing",
-                              device.assigned_to_user_id,
-                            )
-                          }
-                        >
-                          <XCircle size={12} /> Refuser
-                        </button>
-                      </>,
-                    ),
-                  )
-                )}
-              </div>
-            </div>
+            {renderCard(
+              <Shield size={15} />,
+              "Contrôles N2",
+              availableQC.length,
+              availableQC.length === 0 ? (
+                <EmptyState message="Aucun contrôle N2 disponible" />
+              ) : (
+                availableQC.map((device) =>
+                  renderDeviceRow(
+                    device,
+                    <>
+                      <button
+                        type="button"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--success"
+                        onClick={() =>
+                          handleStatusUpdate(device.id, "ready", null)
+                        }
+                      >
+                        <CheckCircle size={12} /> Valider
+                      </button>
+                      <button
+                        type="button"
+                        className="dashboard-benevole__action-btn dashboard-benevole__action-btn--danger"
+                        onClick={() =>
+                          handleStatusUpdate(
+                            device.id,
+                            "repairing",
+                            device.assigned_to_user_id,
+                          )
+                        }
+                      >
+                        <XCircle size={12} /> Refuser
+                      </button>
+                    </>,
+                  ),
+                )
+              ),
+            )}
           </div>
         )}
 
@@ -461,59 +366,37 @@ const DashboardBenevolePage = () => {
         {activeTab === "history" && (
           <div className="dashboard-benevole__history">
             {historyDevices.length === 0 ? (
-              <div
-                className="dashboard-benevole__empty"
-                style={{
-                  background: "var(--color-white)",
-                  border: "0.5px solid var(--color-border)",
-                  borderRadius: "var(--radius)",
-                  padding: 48,
-                }}
-              >
-                <History size={36} style={{ color: "var(--color-border)" }} />
-                <div>Aucun appareil traité pour l'instant</div>
-              </div>
+              <EmptyState
+                icon={<History size={36} />}
+                message="Aucun appareil traité pour l'instant"
+              />
             ) : (
-              historyDevices.map((device) => {
-                const statusConf =
-                  STATUS_CONFIG[device.status] ?? STATUS_CONFIG.to_sort;
-                return (
+              historyDevices.map((device) => (
+                <div
+                  key={device.id}
+                  className="dashboard-benevole__history-item"
+                >
                   <div
-                    key={device.id}
-                    className="dashboard-benevole__history-item"
+                    className="dashboard-benevole__history-icon"
+                    style={{
+                      background: "var(--color-abricot-pale)",
+                      color: "var(--color-abricot-dark)",
+                    }}
                   >
-                    <div
-                      className="dashboard-benevole__history-icon"
-                      style={{
-                        background: "var(--color-abricot-pale)",
-                        color: "var(--color-abricot-dark)",
-                      }}
-                    >
-                      {TYPE_ICONS[device.type]}
-                    </div>
-                    <div className="dashboard-benevole__history-body">
-                      <div className="dashboard-benevole__history-name">
-                        {device.brand} {device.model}
-                      </div>
-                      <div className="dashboard-benevole__history-sub">
-                        {TYPE_LABELS[device.type]} · Reçu le{" "}
-                        {new Date(device.received_at).toLocaleDateString(
-                          "fr-FR",
-                        )}
-                      </div>
-                    </div>
-                    <span
-                      className="dashboard-benevole__history-badge"
-                      style={{
-                        background: statusConf.bg,
-                        color: statusConf.color,
-                      }}
-                    >
-                      {statusConf.label}
-                    </span>
+                    <DeviceIcon type={device.type} size={18} />
                   </div>
-                );
-              })
+                  <div className="dashboard-benevole__history-body">
+                    <div className="dashboard-benevole__history-name">
+                      {device.brand} {device.model}
+                    </div>
+                    <div className="dashboard-benevole__history-sub">
+                      {TYPE_LABELS[device.type]} · Reçu le{" "}
+                      {new Date(device.received_at).toLocaleDateString("fr-FR")}
+                    </div>
+                  </div>
+                  <StatusBadge status={device.status} />
+                </div>
+              ))
             )}
           </div>
         )}
@@ -522,62 +405,49 @@ const DashboardBenevolePage = () => {
         {activeTab === "stats" && (
           <div>
             <div className="dashboard-benevole__stats-grid">
-              <div className="dashboard-benevole__stats-card dashboard-benevole__stats-card--accent">
-                <div
-                  className="dashboard-benevole__stats-icon"
-                  style={{
+              {[
+                {
+                  icon: <Laptop size={22} />,
+                  num: totalTreated,
+                  label: "Appareils traités au total",
+                  style: {
                     background: "rgba(244,162,97,0.15)",
                     color: "var(--color-abricot)",
-                  }}
-                >
-                  <Laptop size={22} />
-                </div>
-                <div className="dashboard-benevole__stats-num">
-                  {totalTreated}
-                </div>
-                <div className="dashboard-benevole__stats-label">
-                  Appareils traités au total
-                </div>
-              </div>
-
-              <div className="dashboard-benevole__stats-card">
-                <div
-                  className="dashboard-benevole__stats-icon"
-                  style={{
+                  },
+                  accent: true,
+                },
+                {
+                  icon: <CheckCircle size={22} />,
+                  num: totalRepaired,
+                  label: "Réparations réussies",
+                  style: {
                     background: "var(--color-success-pale)",
                     color: "var(--color-success)",
-                  }}
-                >
-                  <CheckCircle size={22} />
-                </div>
-                <div className="dashboard-benevole__stats-num">
-                  {totalRepaired}
-                </div>
-                <div className="dashboard-benevole__stats-label">
-                  Réparations réussies
-                </div>
-              </div>
-
-              <div className="dashboard-benevole__stats-card">
-                <div
-                  className="dashboard-benevole__stats-icon"
-                  style={{
+                  },
+                },
+                {
+                  icon: <XCircle size={22} />,
+                  num: totalUnusable,
+                  label: "Déclarés hors service",
+                  style: {
                     background: "var(--color-danger-pale)",
                     color: "var(--color-danger)",
-                  }}
+                  },
+                },
+              ].map(({ icon, num, label, style, accent }) => (
+                <div
+                  key={label}
+                  className={`dashboard-benevole__stats-card${accent ? " dashboard-benevole__stats-card--accent" : ""}`}
                 >
-                  <XCircle size={22} />
+                  <div className="dashboard-benevole__stats-icon" style={style}>
+                    {icon}
+                  </div>
+                  <div className="dashboard-benevole__stats-num">{num}</div>
+                  <div className="dashboard-benevole__stats-label">{label}</div>
                 </div>
-                <div className="dashboard-benevole__stats-num">
-                  {totalUnusable}
-                </div>
-                <div className="dashboard-benevole__stats-label">
-                  Déclarés hors service
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* TAUX DE SUCCÈS */}
             <div
               style={{
                 background: "var(--color-white)",
@@ -644,7 +514,6 @@ const DashboardBenevolePage = () => {
               </div>
             </div>
 
-            {/* CO2 */}
             <div className="dashboard-benevole__co2-card">
               <div className="dashboard-benevole__co2-icon">
                 <Leaf size={28} />
