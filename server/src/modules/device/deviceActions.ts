@@ -2,7 +2,6 @@ import type { RequestHandler } from "express";
 
 import deviceRepository from "./deviceRepository";
 
-// Browse - GET /api/devices
 const browse: RequestHandler = async (req, res, next) => {
   try {
     const devices = await deviceRepository.readAll();
@@ -12,7 +11,6 @@ const browse: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Read - GET /api/devices/:id
 const read: RequestHandler = async (req, res, next) => {
   try {
     const deviceId = Number(req.params.id);
@@ -28,7 +26,6 @@ const read: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Add - POST /api/devices
 const add: RequestHandler = async (req, res, next) => {
   try {
     const newDevice = {
@@ -53,11 +50,11 @@ const add: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Edit - PUT /api/devices/:id/status
 const editStatus: RequestHandler = async (req, res, next) => {
   try {
     const deviceId = Number(req.params.id);
     const { status, assigned_to_user_id } = req.body;
+    const userId = req.user?.id as number;
 
     const affectedRows = await deviceRepository.updateStatus(
       deviceId,
@@ -67,15 +64,27 @@ const editStatus: RequestHandler = async (req, res, next) => {
 
     if (affectedRows === 0) {
       res.sendStatus(404);
-    } else {
-      res.sendStatus(204);
+      return;
     }
+
+    // Trace l'action bénévole
+    const tracedActions = [
+      "diagnosing",
+      "repairing",
+      "quality_check",
+      "unusable",
+      "ready",
+    ];
+    if (tracedActions.includes(status)) {
+      await deviceRepository.createAction(deviceId, userId, status);
+    }
+
+    res.sendStatus(204);
   } catch (err) {
     next(err);
   }
 };
 
-// Destroy - DELETE /api/devices/:id
 const destroy: RequestHandler = async (req, res, next) => {
   try {
     const deviceId = Number(req.params.id);
@@ -91,7 +100,6 @@ const destroy: RequestHandler = async (req, res, next) => {
   }
 };
 
-// ReadByUser - GET /api/devices/my
 const readByUser: RequestHandler = async (req, res, next) => {
   try {
     const userId = req.user?.id as number;
@@ -102,7 +110,16 @@ const readByUser: RequestHandler = async (req, res, next) => {
   }
 };
 
-// EditNotes - PUT /api/devices/:id/notes
+const readActionsByUser: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.user?.id as number;
+    const actions = await deviceRepository.readActionsByUser(userId);
+    res.json(actions);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const editNotes: RequestHandler = async (req, res, next) => {
   try {
     const deviceId = Number(req.params.id);
@@ -127,5 +144,6 @@ export default {
   editStatus,
   editNotes,
   readByUser,
+  readActionsByUser,
   destroy,
 };

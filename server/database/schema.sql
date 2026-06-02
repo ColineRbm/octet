@@ -62,6 +62,17 @@ CREATE TABLE attribution (
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+-- Device actions history
+CREATE TABLE device_action (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  device_id INT NOT NULL,
+  user_id INT NOT NULL,
+  action ENUM('diagnosing', 'repairing', 'quality_check', 'unusable', 'ready') NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (device_id) REFERENCES device(id),
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
 -- Test data
 INSERT INTO user (firstname, lastname, email, password_hash, role) VALUES
 ('Admin', 'Octet', 'admin@octet.fr', '$argon2id$v=19$m=65536,t=3,p=4$khallG/CUseZSzk8/3Vu+w$7WQewrewCeJkvKs2rZ6119PhX7yEpicDAxgeN14sR7U', 'admin'),

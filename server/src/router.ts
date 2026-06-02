@@ -22,6 +22,11 @@ import deviceActions from "./modules/device/deviceActions";
 
 router.get("/api/devices", verifyToken, deviceActions.browse);
 router.get("/api/devices/my", verifyToken, deviceActions.readByUser);
+router.get(
+  "/api/devices/my-actions",
+  verifyToken,
+  deviceActions.readActionsByUser,
+);
 router.get("/api/devices/:id", verifyToken, deviceActions.read);
 
 router.post(

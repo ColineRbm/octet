@@ -19,17 +19,28 @@ import {
 } from "../../../components/ui";
 import { TYPE_LABELS } from "../../../constants/device.constants";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useMyDevices } from "../../../hooks";
+import { useMyActions, useMyDevices } from "../../../hooks";
 import { updateDeviceStatus } from "../../../services/api";
 import type { Device } from "../../../types";
 import "./DashboardBenevolePage.css";
 
 type Tab = "file" | "history" | "stats";
 
+const ACTION_LABELS: Record<string, string> = {
+  diagnosing: "Diagnostic",
+  repairing: "Réparation",
+  quality_check: "Contrôle N2",
+  unusable: "Déclaré HS",
+  ready: "Validé prêt",
+};
+
 const DashboardBenevolePage = () => {
   const { user } = useAuth();
-  const { devices, myDevices, loading, refetch } = useMyDevices();
+  const { devices, loading: loadingDevices, refetch } = useMyDevices();
+  const { actions, loading: loadingActions } = useMyActions();
   const [activeTab, setActiveTab] = useState<Tab>("file");
+
+  const loading = loadingDevices || loadingActions;
 
   const handleStatusUpdate = async (
     deviceId: number,
@@ -54,13 +65,15 @@ const DashboardBenevolePage = () => {
   const availableQC = devices.filter(
     (d) => d.status === "quality_check" && d.assigned_to_user_id !== user?.id,
   );
-  const historyDevices = myDevices.filter((d) => d.status !== "to_sort");
 
-  const totalTreated = myDevices.length;
-  const totalRepaired = myDevices.filter((d) =>
-    ["ready", "attributed", "quality_check"].includes(d.status),
-  ).length;
-  const totalUnusable = myDevices.filter((d) => d.status === "unusable").length;
+  // Stats calculées depuis les actions
+  const totalTreated = new Set(actions.map((a) => a.device_id)).size;
+  const totalRepaired = new Set(
+    actions.filter((a) => a.action === "ready").map((a) => a.device_id),
+  ).size;
+  const totalUnusable = new Set(
+    actions.filter((a) => a.action === "unusable").map((a) => a.device_id),
+  ).size;
   const successRate =
     totalTreated > 0 ? Math.round((totalRepaired / totalTreated) * 100) : 0;
   const co2Saved = totalRepaired * 150;
@@ -76,7 +89,7 @@ const DashboardBenevolePage = () => {
     );
   }
 
-  const renderDeviceRow = (device: Device, actions: React.ReactNode) => (
+  const renderDeviceRow = (device: Device, actionsNode: React.ReactNode) => (
     <div key={device.id} className="dashboard-benevole__device-row">
       <div className="dashboard-benevole__device-icon">
         <DeviceIcon type={device.type} size={18} />
@@ -90,7 +103,7 @@ const DashboardBenevolePage = () => {
         </div>
       </div>
       <StatusBadge status={device.status} />
-      <div className="dashboard-benevole__device-actions">{actions}</div>
+      <div className="dashboard-benevole__device-actions">{actionsNode}</div>
     </div>
   );
 
@@ -189,7 +202,7 @@ const DashboardBenevolePage = () => {
               {
                 id: "history",
                 icon: <History size={14} />,
-                label: `Mon historique (${historyDevices.length})`,
+                label: `Mon historique (${actions.length})`,
               },
               {
                 id: "stats",
@@ -365,15 +378,15 @@ const DashboardBenevolePage = () => {
         {/* TAB — HISTORIQUE */}
         {activeTab === "history" && (
           <div className="dashboard-benevole__history">
-            {historyDevices.length === 0 ? (
+            {actions.length === 0 ? (
               <EmptyState
                 icon={<History size={36} />}
-                message="Aucun appareil traité pour l'instant"
+                message="Aucune action pour l'instant"
               />
             ) : (
-              historyDevices.map((device) => (
+              actions.map((action) => (
                 <div
-                  key={device.id}
+                  key={action.id}
                   className="dashboard-benevole__history-item"
                 >
                   <div
@@ -383,18 +396,22 @@ const DashboardBenevolePage = () => {
                       color: "var(--color-abricot-dark)",
                     }}
                   >
-                    <DeviceIcon type={device.type} size={18} />
+                    <DeviceIcon type={action.type} size={18} />
                   </div>
                   <div className="dashboard-benevole__history-body">
                     <div className="dashboard-benevole__history-name">
-                      {device.brand} {device.model}
+                      {action.brand} {action.model}
                     </div>
                     <div className="dashboard-benevole__history-sub">
-                      {TYPE_LABELS[device.type]} · Reçu le{" "}
-                      {new Date(device.received_at).toLocaleDateString("fr-FR")}
+                      {TYPE_LABELS[action.type]} ·{" "}
+                      {ACTION_LABELS[action.action] ?? action.action}
                     </div>
                   </div>
-                  <StatusBadge status={device.status} />
+                  <span
+                    style={{ fontSize: 11, color: "var(--color-text-sub)" }}
+                  >
+                    {new Date(action.created_at).toLocaleDateString("fr-FR")}
+                  </span>
                 </div>
               ))
             )}

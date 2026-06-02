@@ -121,3 +121,5 @@ export const createAttribution = (attribution: {
     method: "POST",
     body: JSON.stringify(attribution),
   });
+
+export const getMyActions = () => apiFetch("/api/devices/my-actions");

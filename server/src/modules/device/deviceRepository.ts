@@ -1,7 +1,6 @@
 import databaseClient from "../../../database/client";
 import type { Result, Rows } from "../../../database/client";
 
-// Define the Device type matching our database schema
 interface Device {
   id: number;
   type: "desktop" | "laptop" | "tablet";
@@ -27,7 +26,6 @@ interface Device {
 }
 
 class DeviceRepository {
-  // Browse - Get all devices
   async readAll() {
     const [rows] = await databaseClient.query<Rows>(
       "SELECT * FROM device ORDER BY created_at DESC",
@@ -35,7 +33,6 @@ class DeviceRepository {
     return rows as Device[];
   }
 
-  // Read - Get one device by id
   async read(id: number) {
     const [rows] = await databaseClient.query<Rows>(
       "SELECT * FROM device WHERE id = ?",
@@ -44,7 +41,6 @@ class DeviceRepository {
     return rows[0] as Device | undefined;
   }
 
-  // Add - Create a new device
   async create(device: Omit<Device, "id" | "created_at">) {
     const [result] = await databaseClient.query<Result>(
       `INSERT INTO device 
@@ -67,7 +63,6 @@ class DeviceRepository {
     return result.insertId;
   }
 
-  // Edit - Update device status
   async updateStatus(
     id: number,
     status: Device["status"],
@@ -80,7 +75,6 @@ class DeviceRepository {
     return result.affectedRows;
   }
 
-  // Destroy - Delete a device
   async delete(id: number) {
     const [result] = await databaseClient.query<Result>(
       "DELETE FROM device WHERE id = ?",
@@ -89,25 +83,50 @@ class DeviceRepository {
     return result.affectedRows;
   }
 
-  // Get all devices handled by a specific user
   async readByUser(userId: number) {
     const [rows] = await databaseClient.query<Rows>(
       `SELECT * FROM device 
-     WHERE assigned_to_user_id = ? 
-     OR added_by_user_id = ?
-     ORDER BY created_at DESC`,
+       WHERE assigned_to_user_id = ? 
+       OR added_by_user_id = ?
+       ORDER BY created_at DESC`,
       [userId, userId],
     );
     return rows as Device[];
   }
 
-  // Update notes on a device
   async updateNotes(id: number, notes: string) {
     const [result] = await databaseClient.query<Result>(
       "UPDATE device SET notes = ? WHERE id = ?",
       [notes, id],
     );
     return result.affectedRows;
+  }
+
+  async createAction(deviceId: number, userId: number, action: string) {
+    await databaseClient.query<Result>(
+      "INSERT INTO device_action (device_id, user_id, action) VALUES (?, ?, ?)",
+      [deviceId, userId, action],
+    );
+  }
+
+  async readActionsByUser(userId: number) {
+    const [rows] = await databaseClient.query<Rows>(
+      `SELECT 
+        da.id,
+        da.action,
+        da.created_at,
+        d.id AS device_id,
+        d.brand,
+        d.model,
+        d.type,
+        d.status
+       FROM device_action da
+       JOIN device d ON da.device_id = d.id
+       WHERE da.user_id = ?
+       ORDER BY da.created_at DESC`,
+      [userId],
+    );
+    return rows;
   }
 }
 
