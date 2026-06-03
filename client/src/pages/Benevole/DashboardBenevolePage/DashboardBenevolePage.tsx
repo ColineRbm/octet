@@ -37,7 +37,11 @@ const ACTION_LABELS: Record<string, string> = {
 const DashboardBenevolePage = () => {
   const { user } = useAuth();
   const { devices, loading: loadingDevices, refetch } = useMyDevices();
-  const { actions, loading: loadingActions } = useMyActions();
+  const {
+    actions,
+    loading: loadingActions,
+    refetch: refetchActions,
+  } = useMyActions();
   const [activeTab, setActiveTab] = useState<Tab>("file");
 
   const loading = loadingDevices || loadingActions;
@@ -49,7 +53,7 @@ const DashboardBenevolePage = () => {
   ) => {
     try {
       await updateDeviceStatus(deviceId, newStatus, assignedTo);
-      await refetch();
+      await Promise.all([refetch(), refetchActions()]);
     } catch (err) {
       console.error(err);
     }
@@ -66,7 +70,6 @@ const DashboardBenevolePage = () => {
     (d) => d.status === "quality_check" && d.assigned_to_user_id !== user?.id,
   );
 
-  // Stats calculées depuis les actions
   const totalTreated = new Set(actions.map((a) => a.device_id)).size;
   const totalRepaired = new Set(
     actions.filter((a) => a.action === "ready").map((a) => a.device_id),
