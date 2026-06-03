@@ -72,7 +72,7 @@ const DashboardBenevolePage = () => {
 
   const totalTreated = new Set(actions.map((a) => a.device_id)).size;
   const totalRepaired = new Set(
-    actions.filter((a) => a.action === "ready").map((a) => a.device_id),
+    actions.filter((a) => a.action === "repairing").map((a) => a.device_id),
   ).size;
   const totalUnusable = new Set(
     actions.filter((a) => a.action === "unusable").map((a) => a.device_id),
