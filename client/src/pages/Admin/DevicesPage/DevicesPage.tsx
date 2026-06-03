@@ -26,8 +26,14 @@ const DevicesPage = () => {
     try {
       await deleteDevice(id);
       await refetch();
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes("409")) {
+        alert(
+          "Seuls les appareils en statut 'À trier' peuvent être supprimés.",
+        );
+      } else {
+        console.error(err);
+      }
     }
   };
 
@@ -203,14 +209,16 @@ const DevicesPage = () => {
                         >
                           <Eye size={14} />
                         </button>
-                        <button
-                          type="button"
-                          className="devices__action-btn devices__action-btn--danger"
-                          title="Supprimer"
-                          onClick={() => handleDelete(device.id)}
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        {device.status === "to_sort" && (
+                          <button
+                            type="button"
+                            className="devices__action-btn devices__action-btn--danger"
+                            title="Supprimer"
+                            onClick={() => handleDelete(device.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -88,13 +88,23 @@ const editStatus: RequestHandler = async (req, res, next) => {
 const destroy: RequestHandler = async (req, res, next) => {
   try {
     const deviceId = Number(req.params.id);
-    const affectedRows = await deviceRepository.delete(deviceId);
 
-    if (affectedRows === 0) {
+    const device = await deviceRepository.read(deviceId);
+    if (!device) {
       res.sendStatus(404);
-    } else {
-      res.sendStatus(204);
+      return;
     }
+
+    if (device.status !== "to_sort") {
+      res.status(409).json({
+        error:
+          "Seuls les appareils en statut 'À trier' peuvent être supprimés.",
+      });
+      return;
+    }
+
+    await deviceRepository.delete(deviceId);
+    res.sendStatus(204);
   } catch (err) {
     next(err);
   }

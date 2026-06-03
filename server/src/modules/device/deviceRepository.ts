@@ -75,9 +75,10 @@ class DeviceRepository {
     return result.affectedRows;
   }
 
+  // Only devices with status 'to_sort' can be deleted
   async delete(id: number) {
     const [result] = await databaseClient.query<Result>(
-      "DELETE FROM device WHERE id = ?",
+      "DELETE FROM device WHERE id = ? AND status = 'to_sort'",
       [id],
     );
     return result.affectedRows;
