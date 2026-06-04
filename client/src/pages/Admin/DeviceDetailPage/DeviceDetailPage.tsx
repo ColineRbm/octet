@@ -13,7 +13,7 @@ const buildTimeline = (device: Device) => {
     {
       icon: <Package size={15} />,
       bg: "#E8EEF4",
-      color: "#6B8499",
+      color: "#4A6275",
       title: "Appareil réceptionné",
       desc: "Enregistré dans le système.",
       date: new Date(device.created_at).toLocaleDateString("fr-FR"),
