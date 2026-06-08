@@ -451,3 +451,14 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.device-detail__status-select {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-white);
+  cursor: pointer;
+}

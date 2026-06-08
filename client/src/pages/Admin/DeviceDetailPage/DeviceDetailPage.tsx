@@ -15,10 +15,17 @@ import {
   StatusBadge,
   Toast,
 } from "../../../components/ui";
-import { TYPE_LABELS } from "../../../constants/device.constants";
+import {
+  STATUS_CONFIG,
+  TYPE_LABELS,
+} from "../../../constants/device.constants";
 import { useToast } from "../../../hooks";
-import { getDevice, updateDeviceNotes } from "../../../services/api";
-import type { Device } from "../../../types";
+import {
+  getDevice,
+  updateDeviceNotes,
+  updateDeviceStatus,
+} from "../../../services/api";
+import type { Device, DeviceStatus } from "../../../types";
 import "./DeviceDetailPage.css";
 
 const buildTimeline = (device: Device) => {
@@ -103,6 +110,9 @@ const DeviceDetailPage = () => {
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
+  const [editingStatus, setEditingStatus] = useState(false);
+  const [statusValue, setStatusValue] = useState<DeviceStatus>("to_sort");
+  const [savingStatus, setSavingStatus] = useState(false);
 
   useEffect(() => {
     const fetchDevice = async () => {
@@ -110,6 +120,7 @@ const DeviceDetailPage = () => {
         const data = await getDevice(Number(id));
         setDevice(data);
         setNotesValue(data.notes ?? "");
+        setStatusValue(data.status);
       } catch (err) {
         console.error(err);
       } finally {
@@ -132,6 +143,26 @@ const DeviceDetailPage = () => {
       showToast("Une erreur est survenue.", "error");
     } finally {
       setSavingNotes(false);
+    }
+  };
+
+  const handleSaveStatus = async () => {
+    if (!device) return;
+    setSavingStatus(true);
+    try {
+      await updateDeviceStatus(
+        device.id,
+        statusValue,
+        device.assigned_to_user_id,
+      );
+      setDevice({ ...device, status: statusValue });
+      setEditingStatus(false);
+      showToast("Statut mis à jour !");
+    } catch (err) {
+      console.error(err);
+      showToast("Une erreur est survenue.", "error");
+    } finally {
+      setSavingStatus(false);
     }
   };
 
@@ -242,7 +273,6 @@ const DeviceDetailPage = () => {
                       </button>
                     )}
                   </div>
-
                   {editingNotes ? (
                     <div className="device-detail__notes-edit">
                       <textarea
@@ -331,6 +361,71 @@ const DeviceDetailPage = () => {
           {/* RIGHT */}
           <div className="device-detail__right">
             <div className="device-detail__mini-card">
+              {/* STATUT ÉDITABLE */}
+              <div className="device-detail__mini-row">
+                <span className="device-detail__mini-key">Statut actuel</span>
+                {editingStatus ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 6,
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <select
+                      className="device-detail__status-select"
+                      value={statusValue}
+                      onChange={(e) =>
+                        setStatusValue(e.target.value as DeviceStatus)
+                      }
+                    >
+                      {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                        <option key={key} value={key}>
+                          {config.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button
+                        type="button"
+                        className="device-detail__notes-cancel"
+                        onClick={() => {
+                          setEditingStatus(false);
+                          setStatusValue(device.status);
+                        }}
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        type="button"
+                        className="device-detail__notes-save"
+                        onClick={handleSaveStatus}
+                        disabled={savingStatus}
+                      >
+                        {savingStatus ? "..." : "OK"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <StatusBadge status={device.status} />
+                    <button
+                      type="button"
+                      className="device-detail__notes-edit-btn"
+                      onClick={() => setEditingStatus(true)}
+                    >
+                      <Pencil size={11} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="device-detail__mini-divider" />
+
+              {/* AUTRES INFOS */}
               {[
                 {
                   key: "Durée en stock",
