@@ -6,8 +6,14 @@ import {
   EmptyState,
   LoadingState,
   Modal,
+  Toast,
 } from "../../../components/ui";
-import { useAttributions, useBeneficiaries, useDevices } from "../../../hooks";
+import {
+  useAttributions,
+  useBeneficiaries,
+  useDevices,
+  useToast,
+} from "../../../hooks";
 import { createAttribution } from "../../../services/api";
 import type { CessionType } from "../../../types";
 import "./AttributionsPage.css";
@@ -16,6 +22,7 @@ const AttributionsPage = () => {
   const { attributions, loading, refetch } = useAttributions();
   const { devices } = useDevices();
   const { beneficiaries } = useBeneficiaries();
+  const { toast, showToast } = useToast();
 
   const [showModal, setShowModal] = useState(false);
   const [deviceId, setDeviceId] = useState<number | "">("");
@@ -60,9 +67,11 @@ const AttributionsPage = () => {
       });
       await refetch();
       handleClose();
+      showToast("Attribution créée avec succès !");
     } catch (err) {
       console.error(err);
       setError("Une erreur est survenue. Réessayez.");
+      showToast("Une erreur est survenue.", "error");
     } finally {
       setSubmitting(false);
     }
@@ -107,13 +116,12 @@ const AttributionsPage = () => {
       }
     >
       <div className="attributions">
-        {/* STATS */}
         <div className="attributions__stats">
           <div className="attributions__stat-card">
             <div className="attributions__stat-label">
               <div
                 className="attributions__stat-dot"
-                style={{ background: "#1A7A45" }}
+                style={{ background: "#10B981" }}
               />
               Dons gratuits
             </div>
@@ -135,7 +143,7 @@ const AttributionsPage = () => {
             <div className="attributions__stat-label">
               <div
                 className="attributions__stat-dot"
-                style={{ background: "#6B30A0" }}
+                style={{ background: "#8B5CF6" }}
               />
               Montant collecté
             </div>
@@ -144,7 +152,6 @@ const AttributionsPage = () => {
           </div>
         </div>
 
-        {/* TABLE */}
         <div className="attributions__card">
           <div className="attributions__card-head">
             <span className="attributions__card-title">
@@ -370,6 +377,8 @@ const AttributionsPage = () => {
           )}
         </Modal>
       )}
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };

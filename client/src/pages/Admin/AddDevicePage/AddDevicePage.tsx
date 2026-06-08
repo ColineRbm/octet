@@ -69,7 +69,9 @@ const AddDevicePage = () => {
         accessories: accessories || null,
         notes: notes || null,
       });
-      navigate("/admin/devices");
+      navigate("/admin/devices", {
+        state: { toast: "Appareil enregistré avec succès !" },
+      });
     } catch (err) {
       console.error(err);
       setError("Une erreur est survenue. Réessayez.");

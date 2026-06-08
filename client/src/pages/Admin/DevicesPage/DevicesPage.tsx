@@ -1,38 +1,50 @@
 import { Eye, Laptop, Plus, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import {
   DeviceIcon,
   EmptyState,
   LoadingState,
   StatusBadge,
+  Toast,
 } from "../../../components/ui";
 import { STATUS_CONFIG } from "../../../constants/device.constants";
-import { useDevices } from "../../../hooks";
+import { useDevices, useToast } from "../../../hooks";
 import { deleteDevice } from "../../../services/api";
 import type { DeviceStatus } from "../../../types";
 import "./DevicesPage.css";
 
 const DevicesPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { devices, loading, refetch } = useDevices();
+  const { toast, showToast } = useToast();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<DeviceStatus | "all">("all");
   const [typeFilter, setTypeFilter] = useState("");
+
+  useEffect(() => {
+    if (location.state?.toast) {
+      showToast(location.state.toast);
+    }
+  }, [location.state, showToast]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Supprimer cet appareil ?")) return;
     try {
       await deleteDevice(id);
       await refetch();
+      showToast("Appareil supprimé avec succès !");
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes("409")) {
-        alert(
+        showToast(
           "Seuls les appareils en statut 'À trier' peuvent être supprimés.",
+          "error",
         );
       } else {
         console.error(err);
+        showToast("Une erreur est survenue.", "error");
       }
     }
   };
@@ -73,7 +85,6 @@ const DevicesPage = () => {
       }
     >
       <div className="devices">
-        {/* STATS CHIPS */}
         <div className="devices__stats">
           <button
             type="button"
@@ -105,7 +116,6 @@ const DevicesPage = () => {
           ))}
         </div>
 
-        {/* TOOLBAR */}
         <div className="devices__toolbar">
           <div className="devices__search-wrap">
             <Search size={15} className="devices__search-icon" />
@@ -131,7 +141,6 @@ const DevicesPage = () => {
           </span>
         </div>
 
-        {/* TABLE */}
         <div className="devices__table-wrap">
           <table className="devices__table">
             <thead>
@@ -228,6 +237,8 @@ const DevicesPage = () => {
           </table>
         </div>
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };
