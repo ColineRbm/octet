@@ -281,3 +281,61 @@
   color: var(--color-text-sub);
   font-size: 13px;
 }
+
+.devices__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0 8px;
+}
+
+.devices__page-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  font-size: 12px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.devices__page-btn:hover:not(:disabled) {
+  background: var(--color-ardoise-50);
+}
+
+.devices__page-btn--active {
+  background: var(--color-text);
+  color: var(--color-white);
+  border-color: var(--color-text);
+  font-weight: 600;
+}
+
+.devices__page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.devices__table th:nth-child(1) {
+  width: 280px;
+} /* Appareil */
+.devices__table th:nth-child(2) {
+  width: 130px;
+} /* Statut */
+.devices__table th:nth-child(3) {
+  width: 130px;
+} /* Date réception */
+.devices__table th:nth-child(4) {
+  width: 120px;
+} /* Donateur */
+.devices__table th:nth-child(5) {
+  width: 160px;
+} /* Notes */
+.devices__table th:nth-child(6) {
+  width: 80px;
+} /* Actions */

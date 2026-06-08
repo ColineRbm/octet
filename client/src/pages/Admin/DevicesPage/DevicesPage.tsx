@@ -15,6 +15,8 @@ import { deleteDevice } from "../../../services/api";
 import type { DeviceStatus } from "../../../types";
 import "./DevicesPage.css";
 
+const ITEMS_PER_PAGE = 10;
+
 const getDaysInStock = (receivedAt: string) =>
   Math.floor(
     (Date.now() - new Date(receivedAt).getTime()) / (1000 * 60 * 60 * 24),
@@ -28,6 +30,7 @@ const DevicesPage = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<DeviceStatus | "all">("all");
   const [typeFilter, setTypeFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (location.state?.toast) {
@@ -64,6 +67,12 @@ const DevicesPage = () => {
     return matchSearch && matchStatus && matchType;
   });
 
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
   const countByStatus = (status: string) =>
     devices.filter((d) => d.status === status).length;
 
@@ -94,7 +103,10 @@ const DevicesPage = () => {
           <button
             type="button"
             className={`devices__stat-chip${statusFilter === "all" ? " devices__stat-chip--active" : ""}`}
-            onClick={() => setStatusFilter("all")}
+            onClick={() => {
+              setStatusFilter("all");
+              setCurrentPage(1);
+            }}
           >
             <div>
               <div className="devices__stat-label">Tous</div>
@@ -107,7 +119,10 @@ const DevicesPage = () => {
               type="button"
               key={key}
               className={`devices__stat-chip${statusFilter === key ? " devices__stat-chip--active" : ""}`}
-              onClick={() => setStatusFilter(key as DeviceStatus)}
+              onClick={() => {
+                setStatusFilter(key as DeviceStatus);
+                setCurrentPage(1);
+              }}
             >
               <div
                 className="devices__stat-dot"
@@ -128,13 +143,19 @@ const DevicesPage = () => {
               className="devices__search-input"
               placeholder="Rechercher marque, modèle…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
           <select
             className="devices__filter-select"
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
+            onChange={(e) => {
+              setTypeFilter(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option value="">Tous les types</option>
             <option value="laptop">Ordinateur portable</option>
@@ -159,7 +180,7 @@ const DevicesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {paginated.length === 0 ? (
                 <tr>
                   <td colSpan={6}>
                     <EmptyState
@@ -169,7 +190,7 @@ const DevicesPage = () => {
                   </td>
                 </tr>
               ) : (
-                filtered.map((device) => {
+                paginated.map((device) => {
                   const days = getDaysInStock(device.received_at);
                   const isOld = days > 30 && device.status === "to_sort";
                   return (
@@ -270,6 +291,37 @@ const DevicesPage = () => {
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="devices__pagination">
+            <button
+              type="button"
+              className="devices__page-btn"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              ←
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={`devices__page-btn${currentPage === page ? " devices__page-btn--active" : ""}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="devices__page-btn"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} />}
