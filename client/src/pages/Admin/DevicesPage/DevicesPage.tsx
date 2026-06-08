@@ -15,6 +15,11 @@ import { deleteDevice } from "../../../services/api";
 import type { DeviceStatus } from "../../../types";
 import "./DevicesPage.css";
 
+const getDaysInStock = (receivedAt: string) =>
+  Math.floor(
+    (Date.now() - new Date(receivedAt).getTime()) / (1000 * 60 * 60 * 24),
+  );
+
 const DevicesPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,74 +169,103 @@ const DevicesPage = () => {
                   </td>
                 </tr>
               ) : (
-                filtered.map((device) => (
-                  <tr key={device.id}>
-                    <td>
-                      <div className="devices__device-cell">
-                        <div className="devices__device-icon">
-                          <DeviceIcon type={device.type} />
-                        </div>
-                        <div>
-                          <div className="devices__device-name">
-                            {device.brand} {device.model}
+                filtered.map((device) => {
+                  const days = getDaysInStock(device.received_at);
+                  const isOld = days > 30 && device.status === "to_sort";
+                  return (
+                    <tr key={device.id}>
+                      <td>
+                        <div className="devices__device-cell">
+                          <div className="devices__device-icon">
+                            <DeviceIcon type={device.type} />
                           </div>
-                          <div className="devices__device-type">
-                            {device.type}
+                          <div>
+                            <div className="devices__device-name">
+                              {device.brand} {device.model}
+                            </div>
+                            <div className="devices__device-type">
+                              {device.type}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <StatusBadge status={device.status} />
-                    </td>
-                    <td
-                      style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                    >
-                      {new Date(device.received_at).toLocaleDateString("fr-FR")}
-                    </td>
-                    <td
-                      style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                    >
-                      {device.donor ?? "—"}
-                    </td>
-                    <td
-                      style={{
-                        color: "var(--color-text-sub)",
-                        fontSize: 12,
-                        maxWidth: 160,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {device.notes ?? "—"}
-                    </td>
-                    <td>
-                      <div className="devices__actions-cell">
-                        <button
-                          type="button"
-                          className="devices__action-btn"
-                          title="Voir le détail"
-                          onClick={() =>
-                            navigate(`/admin/devices/${device.id}`)
-                          }
+                      </td>
+                      <td>
+                        <StatusBadge status={device.status} />
+                      </td>
+                      <td
+                        style={{ color: "var(--color-text-sub)", fontSize: 12 }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 3,
+                          }}
                         >
-                          <Eye size={14} />
-                        </button>
-                        {device.status === "to_sort" && (
+                          {new Date(device.received_at).toLocaleDateString(
+                            "fr-FR",
+                          )}
+                          {isOld && (
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 600,
+                                color: "#92400E",
+                                background: "#FDE68A",
+                                padding: "1px 6px",
+                                borderRadius: 10,
+                                width: "fit-content",
+                              }}
+                            >
+                              ⚠️ {days} jours
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td
+                        style={{ color: "var(--color-text-sub)", fontSize: 12 }}
+                      >
+                        {device.donor ?? "—"}
+                      </td>
+                      <td
+                        style={{
+                          color: "var(--color-text-sub)",
+                          fontSize: 12,
+                          maxWidth: 160,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {device.notes ?? "—"}
+                      </td>
+                      <td>
+                        <div className="devices__actions-cell">
                           <button
                             type="button"
-                            className="devices__action-btn devices__action-btn--danger"
-                            title="Supprimer"
-                            onClick={() => handleDelete(device.id)}
+                            className="devices__action-btn"
+                            title="Voir le détail"
+                            onClick={() =>
+                              navigate(`/admin/devices/${device.id}`)
+                            }
                           >
-                            <Trash2 size={14} />
+                            <Eye size={14} />
                           </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {device.status === "to_sort" && (
+                            <button
+                              type="button"
+                              className="devices__action-btn devices__action-btn--danger"
+                              title="Supprimer"
+                              onClick={() => handleDelete(device.id)}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
