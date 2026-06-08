@@ -5,16 +5,52 @@ export interface StatusConfig {
   label: string;
   color: string;
   bg: string;
+  dot: string;
 }
 
 export const STATUS_CONFIG: Record<DeviceStatus, StatusConfig> = {
-  to_sort: { label: "À trier", color: "#6A6660", bg: "#F1EFE8" },
-  diagnosing: { label: "Diagnostic", color: "#1C2B3A", bg: "#E8EEF4" },
-  repairing: { label: "Réparation", color: "#A06010", bg: "#FEF3DC" },
-  quality_check: { label: "Contrôle N2", color: "#6B30A0", bg: "#F3E8FA" },
-  ready: { label: "À attribuer", color: "#1A7A45", bg: "#E8F4EE" },
-  attributed: { label: "Attribué", color: "#C04800", bg: "#FEF0E4" },
-  unusable: { label: "Hors service", color: "#A32D2D", bg: "#FDEDEC" },
+  to_sort: {
+    label: "À trier",
+    color: "#6B5C3E",
+    bg: "#FFF3CD",
+    dot: "#D97706",
+  },
+  diagnosing: {
+    label: "Diagnostic",
+    color: "#1A4F7A",
+    bg: "#DBEAFE",
+    dot: "#3B82F6",
+  },
+  repairing: {
+    label: "Réparation",
+    color: "#92400E",
+    bg: "#FDE68A",
+    dot: "#F59E0B",
+  },
+  quality_check: {
+    label: "Contrôle N2",
+    color: "#5B21B6",
+    bg: "#EDE9FE",
+    dot: "#8B5CF6",
+  },
+  ready: {
+    label: "À attribuer",
+    color: "#065F46",
+    bg: "#A7F3D0",
+    dot: "#10B981",
+  },
+  attributed: {
+    label: "Attribué",
+    color: "#1E3A5F",
+    bg: "#BFDBFE",
+    dot: "#3B82F6",
+  },
+  unusable: {
+    label: "Hors service",
+    color: "#7F1D1D",
+    bg: "#FECACA",
+    dot: "#EF4444",
+  },
 };
 
 export const TYPE_LABELS: Record<DeviceType, string> = {

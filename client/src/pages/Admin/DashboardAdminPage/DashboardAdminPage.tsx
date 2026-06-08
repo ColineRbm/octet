@@ -152,7 +152,7 @@ const DashboardAdminPage = () => {
                     <div key={key} className="dashboard__statut-row">
                       <div
                         className="dashboard__statut-dot"
-                        style={{ background: config.color }}
+                        style={{ background: config.dot }}
                       />
                       <span className="dashboard__statut-label">
                         {config.label}
@@ -161,7 +161,7 @@ const DashboardAdminPage = () => {
                       <div className="dashboard__statut-bar">
                         <div
                           className="dashboard__statut-fill"
-                          style={{ width: `${pct}%`, background: config.color }}
+                          style={{ width: `${pct}%`, background: config.dot }}
                         />
                       </div>
                     </div>

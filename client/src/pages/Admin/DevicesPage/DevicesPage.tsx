@@ -95,7 +95,7 @@ const DevicesPage = () => {
             >
               <div
                 className="devices__stat-dot"
-                style={{ background: config.color }}
+                style={{ background: config.dot }}
               />
               <div>
                 <div className="devices__stat-label">{config.label}</div>

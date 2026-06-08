@@ -213,12 +213,12 @@ const AddDevicePage = () => {
                       key={s}
                       type="button"
                       className={`add-device__status-pill${status === s ? " add-device__status-pill--active" : ""}`}
-                      style={status === s ? { borderColor: config.color } : {}}
+                      style={status === s ? { borderColor: config.dot } : {}}
                       onClick={() => setStatus(s)}
                     >
                       <div
                         className="add-device__status-dot"
-                        style={{ background: config.color }}
+                        style={{ background: config.dot }}
                       />
                       <div>
                         <div className="add-device__status-label">
