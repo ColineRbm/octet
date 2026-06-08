@@ -4,3 +4,4 @@ export * from "./useBeneficiaries";
 export * from "./useAttributions";
 export * from "./useMyActions";
 export * from "./useMyDevices";
+export * from "./useToast";

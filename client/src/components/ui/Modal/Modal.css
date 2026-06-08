@@ -73,3 +73,7 @@
   justify-content: flex-end;
   gap: 8px;
 }
+
+dialog {
+  margin: auto;
+}

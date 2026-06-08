@@ -1,16 +1,16 @@
 import { Info, Lock, Mail, Plus, UserCheck } from "lucide-react";
 import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { EmptyState, LoadingState, Modal } from "../../../components/ui";
-import { useUsers } from "../../../hooks";
+import { EmptyState, LoadingState, Modal, Toast } from "../../../components/ui";
+import { useToast, useUsers } from "../../../hooks";
 import { createUser, updateUserStatus } from "../../../services/api";
 import type { User } from "../../../types";
 import "./UsersPage.css";
 
 const UsersPage = () => {
   const { users, loading, refetch } = useUsers();
+  const { toast, showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
-
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -41,8 +41,10 @@ const UsersPage = () => {
     try {
       await updateUserStatus(user.id, newStatus);
       await refetch();
+      showToast(`Compte ${newStatus ? "activé" : "désactivé"} avec succès !`);
     } catch (err) {
       console.error(err);
+      showToast("Une erreur est survenue.", "error");
     }
   };
 
@@ -53,8 +55,10 @@ const UsersPage = () => {
       await createUser({ firstname, lastname, email, password });
       await refetch();
       handleClose();
+      showToast("Bénévole créé avec succès !");
     } catch (err) {
       console.error(err);
+      showToast("Une erreur est survenue.", "error");
     } finally {
       setSubmitting(false);
     }
@@ -257,6 +261,8 @@ const UsersPage = () => {
           </div>
         </Modal>
       )}
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };

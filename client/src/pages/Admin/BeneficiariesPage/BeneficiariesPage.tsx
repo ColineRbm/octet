@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { EmptyState, LoadingState, Modal } from "../../../components/ui";
-import { useBeneficiaries } from "../../../hooks";
+import { EmptyState, LoadingState, Modal, Toast } from "../../../components/ui";
+import { useBeneficiaries, useToast } from "../../../hooks";
 import { createBeneficiary } from "../../../services/api";
 import type { StructureType } from "../../../types";
 import "./BeneficiariesPage.css";
@@ -41,8 +41,8 @@ const STRUCTURE_CONFIG = {
 
 const BeneficiariesPage = () => {
   const { beneficiaries, loading, refetch } = useBeneficiaries();
+  const { toast, showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
-
   const [name, setName] = useState("");
   const [firstname, setFirstname] = useState("");
   const [structureType, setStructureType] = useState<StructureType>("family");
@@ -76,8 +76,10 @@ const BeneficiariesPage = () => {
       });
       await refetch();
       handleClose();
+      showToast("Bénéficiaire ajouté avec succès !");
     } catch (err) {
       console.error(err);
+      showToast("Une erreur est survenue.", "error");
     } finally {
       setSubmitting(false);
     }
@@ -272,6 +274,8 @@ const BeneficiariesPage = () => {
           </div>
         </Modal>
       )}
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };
