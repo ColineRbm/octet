@@ -16,10 +16,11 @@ import {
   EmptyState,
   LoadingState,
   StatusBadge,
+  Toast,
 } from "../../../components/ui";
 import { TYPE_LABELS } from "../../../constants/device.constants";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useMyActions, useMyDevices } from "../../../hooks";
+import { useMyActions, useMyDevices, useToast } from "../../../hooks";
 import { updateDeviceStatus } from "../../../services/api";
 import type { Device } from "../../../types";
 import "./DashboardBenevolePage.css";
@@ -42,6 +43,7 @@ const DashboardBenevolePage = () => {
     loading: loadingActions,
     refetch: refetchActions,
   } = useMyActions();
+  const { toast, showToast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>("file");
 
   const loading = loadingDevices || loadingActions;
@@ -54,8 +56,17 @@ const DashboardBenevolePage = () => {
     try {
       await updateDeviceStatus(deviceId, newStatus, assignedTo);
       await Promise.all([refetch(), refetchActions()]);
+      const messages: Record<string, string> = {
+        diagnosing: "Appareil pris en diagnostic !",
+        repairing: "Appareil passé en réparation !",
+        quality_check: "Envoyé en contrôle N2 !",
+        ready: "Appareil validé — prêt à attribuer !",
+        unusable: "Appareil déclaré hors service.",
+      };
+      showToast(messages[newStatus] ?? "Statut mis à jour !");
     } catch (err) {
       console.error(err);
+      showToast("Une erreur est survenue.", "error");
     }
   };
 
@@ -134,7 +145,6 @@ const DashboardBenevolePage = () => {
       subtitle={`Bonjour ${user?.firstname} 👋`}
     >
       <div className="dashboard-benevole">
-        {/* STATS RAPIDES */}
         <div className="dashboard-benevole__stats">
           <div className="dashboard-benevole__stat-card">
             <div className="dashboard-benevole__stat-top">
@@ -193,7 +203,6 @@ const DashboardBenevolePage = () => {
           </div>
         </div>
 
-        {/* TABS */}
         <div className="dashboard-benevole__tabs">
           {(
             [
@@ -225,7 +234,6 @@ const DashboardBenevolePage = () => {
           ))}
         </div>
 
-        {/* TAB — MA FILE */}
         {activeTab === "file" && (
           <div className="dashboard-benevole__grid">
             {renderCard(
@@ -378,7 +386,6 @@ const DashboardBenevolePage = () => {
           </div>
         )}
 
-        {/* TAB — HISTORIQUE */}
         {activeTab === "history" && (
           <div className="dashboard-benevole__history">
             {actions.length === 0 ? (
@@ -421,7 +428,6 @@ const DashboardBenevolePage = () => {
           </div>
         )}
 
-        {/* TAB — STATS */}
         {activeTab === "stats" && (
           <div>
             <div className="dashboard-benevole__stats-grid">
@@ -551,6 +557,8 @@ const DashboardBenevolePage = () => {
           </div>
         )}
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };
