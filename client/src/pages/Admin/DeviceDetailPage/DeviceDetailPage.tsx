@@ -1,10 +1,23 @@
-import { Laptop, Package, Shield, Stethoscope, Wrench } from "lucide-react";
+import {
+  Laptop,
+  Package,
+  Pencil,
+  Shield,
+  Stethoscope,
+  Wrench,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
-import { DeviceIcon, LoadingState, StatusBadge } from "../../../components/ui";
+import {
+  DeviceIcon,
+  LoadingState,
+  StatusBadge,
+  Toast,
+} from "../../../components/ui";
 import { TYPE_LABELS } from "../../../constants/device.constants";
-import { getDevice } from "../../../services/api";
+import { useToast } from "../../../hooks";
+import { getDevice, updateDeviceNotes } from "../../../services/api";
 import type { Device } from "../../../types";
 import "./DeviceDetailPage.css";
 
@@ -84,14 +97,19 @@ const buildTimeline = (device: Device) => {
 
 const DeviceDetailPage = () => {
   const { id } = useParams();
+  const { toast, showToast } = useToast();
   const [device, setDevice] = useState<Device | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notesValue, setNotesValue] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
     const fetchDevice = async () => {
       try {
         const data = await getDevice(Number(id));
         setDevice(data);
+        setNotesValue(data.notes ?? "");
       } catch (err) {
         console.error(err);
       } finally {
@@ -100,6 +118,22 @@ const DeviceDetailPage = () => {
     };
     fetchDevice();
   }, [id]);
+
+  const handleSaveNotes = async () => {
+    if (!device) return;
+    setSavingNotes(true);
+    try {
+      await updateDeviceNotes(device.id, notesValue);
+      setDevice({ ...device, notes: notesValue });
+      setEditingNotes(false);
+      showToast("Observations mises à jour !");
+    } catch (err) {
+      console.error(err);
+      showToast("Une erreur est survenue.", "error");
+    } finally {
+      setSavingNotes(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -191,9 +225,62 @@ const DeviceDetailPage = () => {
                     </div>
                   ))}
                 </div>
-                {device.notes && (
-                  <div className="device-detail__notes-box">{device.notes}</div>
-                )}
+
+                {/* NOTES ÉDITABLES */}
+                <div className="device-detail__notes-section">
+                  <div className="device-detail__notes-head">
+                    <span className="device-detail__info-label">
+                      Observations
+                    </span>
+                    {!editingNotes && (
+                      <button
+                        type="button"
+                        className="device-detail__notes-edit-btn"
+                        onClick={() => setEditingNotes(true)}
+                      >
+                        <Pencil size={12} /> Modifier
+                      </button>
+                    )}
+                  </div>
+
+                  {editingNotes ? (
+                    <div className="device-detail__notes-edit">
+                      <textarea
+                        className="device-detail__notes-textarea"
+                        value={notesValue}
+                        onChange={(e) => setNotesValue(e.target.value)}
+                        placeholder="Observations, pièces manquantes, remarques…"
+                        rows={4}
+                      />
+                      <div className="device-detail__notes-actions">
+                        <button
+                          type="button"
+                          className="device-detail__notes-cancel"
+                          onClick={() => {
+                            setEditingNotes(false);
+                            setNotesValue(device.notes ?? "");
+                          }}
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          type="button"
+                          className="device-detail__notes-save"
+                          onClick={handleSaveNotes}
+                          disabled={savingNotes}
+                        >
+                          {savingNotes ? "Enregistrement..." : "Sauvegarder"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`device-detail__notes-box${!device.notes ? " device-detail__info-val--muted" : ""}`}
+                    >
+                      {device.notes ?? "Aucune observation"}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -270,6 +357,8 @@ const DeviceDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </PageLayout>
   );
 };
