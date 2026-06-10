@@ -194,7 +194,7 @@ const AttributionsPage = () => {
                         </div>
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Bénéficiaire">
                       <div style={{ fontWeight: 500 }}>
                         {attr.beneficiary_firstname
                           ? `${attr.beneficiary_firstname} ${attr.beneficiary_name}`
@@ -206,7 +206,7 @@ const AttributionsPage = () => {
                         {attr.structure_type}
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Type">
                       <span
                         className={`attributions__cession-badge attributions__cession-badge--${attr.cession_type}`}
                       >
@@ -214,6 +214,7 @@ const AttributionsPage = () => {
                       </span>
                     </td>
                     <td
+                      data-label="Prix"
                       style={{ color: "var(--color-text-sub)", fontSize: 12 }}
                     >
                       {attr.cession_type === "donation"
@@ -221,11 +222,13 @@ const AttributionsPage = () => {
                         : `${attr.price} €`}
                     </td>
                     <td
+                      data-label="Date"
                       style={{ color: "var(--color-text-sub)", fontSize: 12 }}
                     >
                       {new Date(attr.attributed_at).toLocaleDateString("fr-FR")}
                     </td>
                     <td
+                      data-label="Par"
                       style={{ color: "var(--color-text-sub)", fontSize: 12 }}
                     >
                       {attr.attributed_by_firstname}{" "}

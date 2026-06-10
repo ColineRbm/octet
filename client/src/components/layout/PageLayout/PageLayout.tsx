@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import Topbar from "../Topbar/Topbar";
 import "./PageLayout.css";
@@ -15,11 +16,29 @@ const PageLayout = ({
   actions,
   children,
 }: PageLayoutProps) => {
+  // This state controls the opening of the drawer on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="page-layout">
-      <Sidebar />
+      {isSidebarOpen && (
+        <button
+          type="button"
+          className="page-layout__overlay"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-label="Fermer le menu"
+        />
+      )}
+
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
       <div className="page-layout__main">
-        <Topbar title={title} subtitle={subtitle} actions={actions} />
+        <Topbar
+          title={title}
+          subtitle={subtitle}
+          actions={actions}
+          onMenuToggle={() => setIsSidebarOpen((prev) => !prev)}
+        />
         <div className="page-layout__content">{children}</div>
       </div>
     </div>

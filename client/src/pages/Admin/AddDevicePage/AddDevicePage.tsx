@@ -200,7 +200,7 @@ const AddDevicePage = () => {
             </div>
           </div>
 
-          {/* STATUT */}
+          {/* STATUS */}
           <div className="add-device__section">
             <div className="add-device__section-head">
               <Laptop size={16} />
@@ -234,7 +234,7 @@ const AddDevicePage = () => {
             </div>
           </div>
 
-          {/* ÉTAT & NOTES */}
+          {/* CONDITION & NOTES */}
           <div className="add-device__section">
             <div className="add-device__section-head">
               <Laptop size={16} />

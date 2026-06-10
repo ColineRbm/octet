@@ -54,7 +54,7 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      {/* LEFT PANEL */}
+      {/* LEFT PART */}
       <div className="login-page__left">
         <div>
           {/* Brand */}
@@ -119,7 +119,7 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
+      {/* RIGHT PART */}
       <div className="login-page__right">
         <div className="login-page__form-wrapper">
           <h2 className="login-page__title">Connexion</h2>

@@ -14,7 +14,7 @@ const Modal = ({ title, icon, onClose, footer, children }: ModalProps) => {
   const modalRef = useRef<HTMLDialogElement>(null);
   const titleId = "modal-title";
 
-  // Fermeture avec Echap
+  // close with Echap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -32,13 +32,13 @@ const Modal = ({ title, icon, onClose, footer, children }: ModalProps) => {
         const lastElement = focusableElements[focusableElements.length - 1];
 
         if (e.shiftKey) {
-          // Shift+Tab — si on est sur le premier élément, on va au dernier
+          // Shift+Tab — If we are on the first element, we go to the last one.
           if (document.activeElement === firstElement) {
             e.preventDefault();
             lastElement.focus();
           }
         } else {
-          // Tab — si on est sur le dernier élément, on va au premier
+          // Tab — If we are on the last element, we go to the first one.
           if (document.activeElement === lastElement) {
             e.preventDefault();
             firstElement.focus();
@@ -51,7 +51,7 @@ const Modal = ({ title, icon, onClose, footer, children }: ModalProps) => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  // Focus sur le premier élément à l'ouverture
+  // Focus on the first element at the opening
   useEffect(() => {
     const firstFocusable = modalRef.current?.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',

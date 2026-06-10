@@ -1,7 +1,8 @@
-/* ===== PAGE LAYOUT ===== */
+/* GLOBAL LAYOUT */
 .page-layout {
   display: flex;
   min-height: 100vh;
+  position: relative;
 }
 
 .page-layout__main {
@@ -10,9 +11,42 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .page-layout__content {
   padding: 24px 28px;
   flex: 1;
+}
+
+.page-layout__overlay {
+  display: none;
+  border: none;
+  cursor: default;
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .page-layout__main {
+    margin-left: 60px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .page-layout__main {
+    margin-left: 0;
+  }
+
+  .page-layout__content {
+    padding: 16px;
+  }
+
+  .page-layout__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(14, 28, 40, 0.5);
+    z-index: 99;
+  }
 }

@@ -6,7 +6,7 @@ import {
   Stethoscope,
   Wrench,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import {
@@ -257,7 +257,7 @@ const DeviceDetailPage = () => {
                   ))}
                 </div>
 
-                {/* NOTES ÉDITABLES */}
+                {/* EDITABLE NOTES */}
                 <div className="device-detail__notes-section">
                   <div className="device-detail__notes-head">
                     <span className="device-detail__info-label">
@@ -358,10 +358,10 @@ const DeviceDetailPage = () => {
             </div>
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT PART */}
           <div className="device-detail__right">
             <div className="device-detail__mini-card">
-              {/* STATUT ÉDITABLE */}
+              {/* EDIT STATUS */}
               <div className="device-detail__mini-row">
                 <span className="device-detail__mini-key">Statut actuel</span>
                 {editingStatus ? (
@@ -425,7 +425,7 @@ const DeviceDetailPage = () => {
 
               <div className="device-detail__mini-divider" />
 
-              {/* AUTRES INFOS */}
+              {/* OTHER INFOS */}
               {[
                 {
                   key: "Durée en stock",
@@ -434,8 +434,8 @@ const DeviceDetailPage = () => {
                 { key: "CO₂ économisé", val: "~150 kg", success: true },
                 { key: "Donateur", val: device.donor ?? "—" },
               ].map(({ key, val, success }, i, arr) => (
-                <>
-                  <div key={key} className="device-detail__mini-row">
+                <Fragment key={key}>
+                  <div className="device-detail__mini-row">
                     <span className="device-detail__mini-key">{key}</span>
                     <span
                       className={`device-detail__mini-val${success ? " device-detail__mini-val--success" : ""}`}
@@ -446,7 +446,7 @@ const DeviceDetailPage = () => {
                   {i < arr.length - 1 && (
                     <div className="device-detail__mini-divider" />
                   )}
-                </>
+                </Fragment>
               ))}
             </div>
           </div>

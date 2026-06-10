@@ -1,4 +1,3 @@
-/* ===== USERS PAGE ===== */
 .users {
   display: flex;
   flex-direction: column;
@@ -381,4 +380,38 @@
 .users__modal-submit:disabled {
   background: var(--color-ardoise-400);
   cursor: not-allowed;
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .users__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .users__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .users__modal-row {
+    grid-template-columns: 1fr;
+  }
+
+  .users__modal-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .users__modal-actions {
+    width: 100%;
+    flex-direction: column-reverse;
+  }
+
+  .users__modal-cancel,
+  .users__modal-submit {
+    width: 100%;
+    justify-content: center;
+  }
 }

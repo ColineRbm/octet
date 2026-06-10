@@ -6,12 +6,18 @@ import {
   Recycle,
   UserCheck,
   Users,
+  X,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./Sidebar.css";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen: boolean; // controls the moving drawer
+  onClose: () => void; // call to close
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -57,15 +63,25 @@ const Sidebar = () => {
   const navItems = user?.role === "admin" ? adminNavItems : benevoleNavItems;
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${isOpen ? " sidebar--open" : ""}`}>
       <div className="sidebar__brand">
         <div className="sidebar__brand-icon">
           <Recycle size={18} />
         </div>
-        <div>
+        <div className="sidebar__brand-text">
           <div className="sidebar__brand-name">Octet</div>
           <div className="sidebar__brand-tagline">Ressourcerie Numérique</div>
         </div>
+
+        {/* Close button — visible only on mobile */}
+        <button
+          type="button"
+          className="sidebar__close-btn"
+          onClick={onClose}
+          aria-label="Fermer le menu"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       <nav className="sidebar__section">
@@ -78,9 +94,11 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `sidebar__nav-item${isActive ? " sidebar__nav-item--active" : ""}`
             }
+            // Close the drawer when browsing on mobile
+            onClick={onClose}
           >
             <span className="sidebar__nav-icon">{item.icon}</span>
-            {item.label}
+            <span className="sidebar__nav-label">{item.label}</span>
           </NavLink>
         ))}
       </nav>
@@ -89,7 +107,7 @@ const Sidebar = () => {
 
       <div className="sidebar__user">
         <div className="sidebar__user-avatar">{initials}</div>
-        <div>
+        <div className="sidebar__user-info">
           <div className="sidebar__user-name">
             {user?.firstname} {user?.lastname}
           </div>

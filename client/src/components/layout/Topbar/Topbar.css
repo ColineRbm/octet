@@ -1,4 +1,4 @@
-/* ===== TOPBAR ===== */
+/* TOPBAR */
 .topbar {
   background: var(--color-white);
   border-bottom: 0.5px solid var(--color-border);
@@ -14,6 +14,12 @@
 
 .topbar__left {
   display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar__titles {
+  display: flex;
   flex-direction: column;
 }
 
@@ -26,6 +32,22 @@
 .topbar__subtitle {
   font-size: 11px;
   color: var(--color-text-sub);
+}
+
+/* Button hamburger !desktop */
+.topbar__menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.topbar__menu-btn:hover {
+  background: var(--color-ardoise-100);
 }
 
 .topbar__right {
@@ -65,4 +87,25 @@
 .topbar__btn--primary:hover {
   background: var(--color-abricot-dark);
   color: var(--color-white);
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .topbar {
+    padding: 0 20px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  /* Button hamburger */
+  .topbar__menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

@@ -1,11 +1,10 @@
-/* ===== BENEFICIARIES PAGE ===== */
 .beneficiaries {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* CARDS GRID */
+/* GRID */
 .beneficiaries__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -295,4 +294,31 @@
 .beneficiaries__modal-submit:hover {
   background: var(--color-abricot-dark);
   color: var(--color-white);
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .beneficiaries__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .beneficiaries__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .beneficiaries__modal-row {
+    grid-template-columns: 1fr;
+  }
+
+  .beneficiaries__modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .beneficiaries__modal-cancel,
+  .beneficiaries__modal-submit {
+    width: 100%;
+  }
 }

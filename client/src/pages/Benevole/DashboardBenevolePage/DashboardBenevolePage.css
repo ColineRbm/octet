@@ -1,11 +1,9 @@
-/* ===== DASHBOARD BENEVOLE ===== */
 .dashboard-benevole {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* GREETING */
 .dashboard-benevole__greeting {
   margin-bottom: 4px;
 }
@@ -316,7 +314,7 @@
   font-weight: 600;
 }
 
-/* HISTORIQUE */
+/* HISTORY */
 .dashboard-benevole__history {
   display: flex;
   flex-direction: column;
@@ -371,7 +369,7 @@
   flex-shrink: 0;
 }
 
-/* STATS PAGE */
+/* STATS */
 .dashboard-benevole__stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -463,4 +461,71 @@
   font-size: 12px;
   opacity: 0.6;
   margin-top: 2px;
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .dashboard-benevole__stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dashboard-benevole__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-benevole__stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .dashboard-benevole__stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .dashboard-benevole__stat-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .dashboard-benevole__stat-num {
+    font-size: 24px;
+  }
+
+  .dashboard-benevole__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-benevole__stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-benevole__stats-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .dashboard-benevole__co2-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .dashboard-benevole__co2-num {
+    font-size: 32px;
+  }
+
+  .dashboard-benevole__device-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dashboard-benevole__action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashboard-benevole__greeting-title {
+    font-size: 20px;
+  }
 }

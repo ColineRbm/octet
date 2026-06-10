@@ -195,6 +195,7 @@ const DevicesPage = () => {
                   const isOld = days > 30 && device.status === "to_sort";
                   return (
                     <tr key={device.id}>
+                      {/* Column 1: no data-label, displayed in the map header on mobile */}
                       <td>
                         <div className="devices__device-cell">
                           <div className="devices__device-icon">
@@ -210,10 +211,13 @@ const DevicesPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      {/* Column 2 : Status */}
+                      <td data-label="Statut">
                         <StatusBadge status={device.status} />
                       </td>
+                      {/* Column 3 : Receipt_date */}
                       <td
+                        data-label="Reçu le"
                         style={{ color: "var(--color-text-sub)", fontSize: 12 }}
                       >
                         <div
@@ -243,12 +247,16 @@ const DevicesPage = () => {
                           )}
                         </div>
                       </td>
+                      {/* Column 4 : Donor — hidden on mobile/tablet */}
                       <td
+                        data-label="Donateur"
                         style={{ color: "var(--color-text-sub)", fontSize: 12 }}
                       >
                         {device.donor ?? "—"}
                       </td>
+                      {/* Column 5 : Notes — hidden on mobile/tablet */}
                       <td
+                        data-label="Notes"
                         style={{
                           color: "var(--color-text-sub)",
                           fontSize: 12,
@@ -260,11 +268,12 @@ const DevicesPage = () => {
                       >
                         {device.notes ?? "—"}
                       </td>
-                      <td>
+                      {/* Column 6 : Actions */}
+                      <td data-label="Actions">
                         <div className="devices__actions-cell">
                           <button
                             type="button"
-                            className="devices__action-btn"
+                            className="devices__action-btn devices__action-btn--primary"
                             title="Voir le détail"
                             onClick={() =>
                               navigate(`/admin/devices/${device.id}`)

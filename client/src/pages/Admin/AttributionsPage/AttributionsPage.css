@@ -1,11 +1,9 @@
-/* ===== ATTRIBUTIONS PAGE ===== */
 .attributions {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* STATS */
 .attributions__stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -51,7 +49,7 @@
   color: var(--color-text-sub);
 }
 
-/* TABLE CARD */
+/* CARD */
 .attributions__card {
   background: var(--color-white);
   border: 0.5px solid var(--color-border);
@@ -116,7 +114,6 @@
   color: var(--color-text);
 }
 
-/* DEVICE CELL */
 .attributions__device-cell {
   display: flex;
   align-items: center;
@@ -144,7 +141,7 @@
   color: var(--color-text-sub);
 }
 
-/* CESSION BADGE */
+/* BADGE */
 .attributions__cession-badge {
   display: inline-flex;
   align-items: center;
@@ -184,4 +181,69 @@
   padding: 48px;
   color: var(--color-text-sub);
   font-size: 13px;
+}
+
+/* TABLET */
+@media (max-width: 1023px) {
+  .attributions__stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .attributions__table th:nth-child(4),
+  .attributions__table td:nth-child(4) {
+    display: none;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .attributions__stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .attributions__table thead {
+    display: none;
+  }
+
+  .attributions__table tbody tr {
+    display: block;
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    padding: 12px 14px;
+  }
+
+  .attributions__table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--color-ardoise-50);
+  }
+
+  .attributions__table td:first-child {
+    border-bottom: 0.5px solid var(--color-border);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+
+  .attributions__table td:last-child {
+    border-bottom: none;
+  }
+
+  .attributions__table td::before {
+    content: attr(data-label);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-sub);
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .attributions__table td:first-child::before {
+    display: none;
+  }
 }

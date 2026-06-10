@@ -127,7 +127,7 @@ const DashboardAdminPage = () => {
           </div>
         </div>
 
-        {/* MAIN GRID */}
+        {/* BODY GRID */}
         <div className="dashboard__grid">
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {/* Répartition par statut */}
@@ -170,7 +170,7 @@ const DashboardAdminPage = () => {
               </div>
             </div>
 
-            {/* Attributions récentes */}
+            {/* Recent Assignments */}
             <div className="dashboard__card">
               <div className="dashboard__card-head">
                 <span className="dashboard__card-title">
@@ -230,7 +230,7 @@ const DashboardAdminPage = () => {
             </div>
           </div>
 
-          {/* Prêts à attribuer */}
+          {/* Ready */}
           <div className="dashboard__card">
             <div className="dashboard__card-head">
               <span className="dashboard__card-title">Prêts à attribuer</span>
