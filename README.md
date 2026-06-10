@@ -2,8 +2,6 @@
 
 > Collecter, reconditionner, redistribuer. Réduire la fracture numérique, un appareil à la fois.
 
-![Dashboard Octet](docs/screenshots/dashboard-admin.png)
-
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white&style=flat-square)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white&style=flat-square)](https://nodejs.org)
@@ -25,9 +23,17 @@ Deux profils utilisateurs : **Admin** (pilotage global) et **Bénévole** (trait
 
 ## Aperçu
 
-| Dashboard admin | Liste des appareils | Modale d'attribution |
-|-----------------|--------------------|--------------------|
-| ![Dashboard](docs/screenshots/dashboard-admin.png) | ![Appareils](docs/screenshots/devices-list.png) | ![Attribution](docs/screenshots/modal-attribution.png) |
+### Dashboards
+
+| Admin | Bénévole |
+|-------|----------|
+| ![Dashboard admin](docs/screenshots/dashboard-admin.png) | ![Dashboard bénévole](docs/screenshots/dashboard-benevole.png) |
+
+### Gestion des appareils
+
+| Liste des appareils | Attribution |
+|--------------------|-------------|
+| ![Liste appareils](docs/screenshots/devices-list.png) | ![Modale attribution](docs/screenshots/modal-attribution.png) |
 
 ---
 
@@ -172,11 +178,12 @@ octet/
 
 ## Déploiement
 
-L'application sera prochainement déployée sur [Railway](https://railway.app).  
+L'application est déployée sur [Railway](https://railway.app).  
+Voir la [documentation de déploiement](docs/DEPLOIEMENT.md) pour reproduire la configuration.
 
 ---
 
 ## Auteure
 
-Coline Rabemihoatra — projet de certification RNCP37674 Développeur Web et Web Mobile  
+Coline Rabemihoatra — projet personnel pour la certification RNCP37674 Développeur Web et Web Mobile  
 Wild Code School Lille — 2026
