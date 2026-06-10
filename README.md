@@ -20,7 +20,7 @@ Application de gestion d'une ressourcerie spécialisée en matériel informatiqu
 
 | Côté client | Côté serveur | Base de données |
 |-------------|--------------|-----------------|
-| React + TypeScript | Node.js + Express + TypeScript | MySQL + Prisma |
+| React + TypeScript | Node.js + Express + TypeScript | MySQL |
 | Vite + Biome | JWT + Argon2 | MongoDB (logs) |
 | Lucide React | CORS | |
 
