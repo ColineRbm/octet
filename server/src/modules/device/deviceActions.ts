@@ -67,7 +67,6 @@ const editStatus: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // Trace l'action bénévole
     const tracedActions = [
       "diagnosing",
       "repairing",
