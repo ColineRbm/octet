@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 
+import logRepository from "../log/logRepository";
 import deviceRepository from "./deviceRepository";
 
 const browse: RequestHandler = async (req, res, next) => {
@@ -44,6 +45,14 @@ const add: RequestHandler = async (req, res, next) => {
     };
 
     const insertId = await deviceRepository.create(newDevice);
+
+    await logRepository.create("device_created", req.user?.id ?? null, {
+      device_id: insertId,
+      type: newDevice.type,
+      brand: newDevice.brand,
+      model: newDevice.model,
+    });
+
     res.status(201).json({ insertId });
   } catch (err) {
     next(err);
@@ -103,6 +112,14 @@ const destroy: RequestHandler = async (req, res, next) => {
     }
 
     await deviceRepository.delete(deviceId);
+
+    await logRepository.create("device_deleted", req.user?.id ?? null, {
+      device_id: deviceId,
+      brand: device.brand,
+      model: device.model,
+      type: device.type,
+    });
+
     res.sendStatus(204);
   } catch (err) {
     next(err);
