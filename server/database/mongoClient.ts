@@ -11,7 +11,7 @@ mongoose
     console.warn(
       "Warning:",
       "Failed to establish a MongoDB connection.",
-      "Please check MONGO_URI in your .env file if you need MongoDB access.",
+      "Please check MONGO_URL in your .env file if you need MongoDB access.",
     );
     console.warn(error.message);
   });
