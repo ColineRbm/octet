@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 
+import logRepository from "../log/logRepository";
 import beneficiaryRepository from "./beneficiaryRepository";
 
 // Browse - GET /api/beneficiaries
@@ -40,6 +41,14 @@ const add: RequestHandler = async (req, res, next) => {
     };
 
     const insertId = await beneficiaryRepository.create(newBeneficiary);
+
+    // Log : admin a créé un nouveau bénéficiaire
+    await logRepository.create("beneficiary_created", req.user?.id ?? null, {
+      beneficiary_id: insertId,
+      name: newBeneficiary.name,
+      structure_type: newBeneficiary.structure_type,
+    });
+
     res.status(201).json({ insertId });
   } catch (err) {
     next(err);

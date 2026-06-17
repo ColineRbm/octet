@@ -5,6 +5,7 @@ import "dotenv/config";
 // Note: This is optional and can be removed if the database connection
 // is not required when starting the application
 import "../database/checkConnection";
+import "../database/mongoClient";
 
 // Import the Express application from ./app
 import app from "./app";

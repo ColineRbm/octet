@@ -1,6 +1,7 @@
-import type { RequestHandler } from "express";
 import argon2 from "argon2";
+import type { RequestHandler } from "express";
 
+import logRepository from "../log/logRepository";
 import userRepository from "./userRepository";
 
 // Browse - GET /api/users
@@ -34,7 +35,6 @@ const add: RequestHandler = async (req, res, next) => {
   try {
     const { firstname, lastname, email, password } = req.body;
 
-    // Hash the password before storing it
     const password_hash = await argon2.hash(password);
 
     const insertId = await userRepository.create({
@@ -42,6 +42,12 @@ const add: RequestHandler = async (req, res, next) => {
       lastname,
       email,
       password_hash,
+    });
+
+    // Log : admin a créé un nouveau bénévole
+    await logRepository.create("user_created", req.user?.id ?? null, {
+      new_user_email: email,
+      new_user_id: insertId,
     });
 
     res.status(201).json({ insertId });
@@ -64,6 +70,12 @@ const editStatus: RequestHandler = async (req, res, next) => {
     if (affectedRows === 0) {
       res.sendStatus(404);
     } else {
+      // Log : admin a activé ou désactivé un bénévole
+      await logRepository.create("user_status_changed", req.user?.id ?? null, {
+        target_user_id: userId,
+        is_active,
+      });
+
       res.sendStatus(204);
     }
   } catch (err) {

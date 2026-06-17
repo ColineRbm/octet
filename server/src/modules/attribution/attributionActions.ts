@@ -1,7 +1,8 @@
 import type { RequestHandler } from "express";
 
-import attributionRepository from "./attributionRepository";
 import deviceRepository from "../device/deviceRepository";
+import logRepository from "../log/logRepository";
+import attributionRepository from "./attributionRepository";
 
 // Browse - GET /api/attributions
 const browse: RequestHandler = async (req, res, next) => {
@@ -41,15 +42,22 @@ const add: RequestHandler = async (req, res, next) => {
       notes: req.body.notes ?? null,
     };
 
-    // Create the attribution
     const insertId = await attributionRepository.create(newAttribution);
 
-    // Update device status to "attributed"
     await deviceRepository.updateStatus(
       newAttribution.device_id,
       "attributed",
       null,
     );
+
+    // Log : admin a créé une attribution
+    await logRepository.create("attribution_created", req.user?.id ?? null, {
+      attribution_id: insertId,
+      device_id: newAttribution.device_id,
+      beneficiary_id: newAttribution.beneficiary_id,
+      cession_type: newAttribution.cession_type,
+      price: newAttribution.price,
+    });
 
     res.status(201).json({ insertId });
   } catch (err) {

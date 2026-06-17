@@ -1,0 +1,50 @@
+import { Schema, model } from "mongoose";
+
+// Interface TypeScript — comme tes types dans device.types.ts
+export type LogAction =
+  | "login_success"
+  | "login_failed"
+  | "user_created"
+  | "user_status_changed"
+  | "beneficiary_created"
+  | "attribution_created"
+  | "device_created"
+  | "device_deleted";
+
+export interface LogDocument {
+  action: LogAction; // au lieu de "string"
+  user_id: number | null;
+  details: Record<string, unknown>;
+  timestamp: Date;
+}
+
+const logSchema = new Schema<LogDocument>({
+  action: {
+    type: String,
+    required: true,
+    enum: [
+      "login_success",
+      "login_failed",
+      "user_created",
+      "user_status_changed",
+      "beneficiary_created",
+      "attribution_created",
+      "device_created",
+      "device_deleted",
+    ],
+  },
+  user_id: {
+    type: Number,
+    default: null,
+  },
+  details: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export const Log = model<LogDocument>("Log", logSchema);
