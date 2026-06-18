@@ -382,6 +382,32 @@
   cursor: not-allowed;
 }
 
+/* FOOTER ACTIONS */
+.users__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.users__reset-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 0.5px solid var(--color-border);
+  background: var(--color-ardoise-50);
+  color: var(--color-text-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.users__reset-btn:hover {
+  background: var(--color-ardoise-100);
+  color: var(--color-ardoise-800);
+}
+
 /* TABLET */
 @media (max-width: 1023px) {
   .users__grid {

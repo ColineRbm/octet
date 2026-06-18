@@ -6,6 +6,7 @@ export type LogAction =
   | "login_failed"
   | "user_created"
   | "user_status_changed"
+  | "user_password_reset"
   | "beneficiary_created"
   | "attribution_created"
   | "device_created"
@@ -27,6 +28,7 @@ const logSchema = new Schema<LogDocument>({
       "login_failed",
       "user_created",
       "user_status_changed",
+      "user_password_reset",
       "beneficiary_created",
       "attribution_created",
       "device_created",

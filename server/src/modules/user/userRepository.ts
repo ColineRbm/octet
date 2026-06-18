@@ -50,6 +50,15 @@ class UserRepository {
     );
     return result.affectedRows;
   }
+
+  // Reset password by admin
+  async updatePassword(id: number, password_hash: string) {
+    const [result] = await databaseClient.query<Result>(
+      "UPDATE user SET password_hash = ? WHERE id = ?",
+      [password_hash, id],
+    );
+    return result.affectedRows;
+  }
 }
 
 export default new UserRepository();

@@ -118,6 +118,16 @@ router.put(
   userActions.editStatus,
 );
 
+router.put(
+  "/api/users/:id/password",
+  verifyToken,
+  isAdmin,
+  validate([
+    { field: "newPassword", required: true, type: "string", minLength: 8 },
+  ]),
+  userActions.resetPassword,
+);
+
 // Beneficiary routes (admin only)
 import beneficiaryActions from "./modules/beneficiary/beneficiaryActions";
 

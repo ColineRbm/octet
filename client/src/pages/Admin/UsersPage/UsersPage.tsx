@@ -1,21 +1,34 @@
-import { Info, Lock, Mail, Plus, UserCheck } from "lucide-react";
+import { Info, KeyRound, Lock, Mail, Plus, UserCheck } from "lucide-react";
 import { useState } from "react";
 import PageLayout from "../../../components/layout/PageLayout/PageLayout";
 import { EmptyState, LoadingState, Modal, Toast } from "../../../components/ui";
 import { useToast, useUsers } from "../../../hooks";
-import { createUser, updateUserStatus } from "../../../services/api";
+import {
+  createUser,
+  resetUserPassword,
+  updateUserStatus,
+} from "../../../services/api";
 import type { User } from "../../../types";
 import "./UsersPage.css";
 
 const UsersPage = () => {
   const { users, loading, refetch } = useUsers();
   const { toast, showToast } = useToast();
+
+  // Modale création
   const [showModal, setShowModal] = useState(false);
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // Modale reset mot de passe
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   const resetForm = () => {
     setFirstname("");
@@ -27,6 +40,20 @@ const UsersPage = () => {
   const handleClose = () => {
     setShowModal(false);
     resetForm();
+  };
+
+  const handleOpenReset = (user: User) => {
+    setSelectedUser(user);
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowResetModal(true);
+  };
+
+  const handleCloseReset = () => {
+    setShowResetModal(false);
+    setSelectedUser(null);
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   const handleToggleStatus = async (user: User) => {
@@ -61,6 +88,29 @@ const UsersPage = () => {
       showToast("Une erreur est survenue.", "error");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!selectedUser || !newPassword || !confirmPassword) return;
+
+    if (newPassword !== confirmPassword) {
+      showToast("Les mots de passe ne correspondent pas.", "error");
+      return;
+    }
+
+    setResetting(true);
+    try {
+      await resetUserPassword(selectedUser.id, newPassword);
+      handleCloseReset();
+      showToast(
+        `Mot de passe de ${selectedUser.firstname} réinitialisé avec succès !`,
+      );
+    } catch (err) {
+      console.error(err);
+      showToast("Une erreur est survenue.", "error");
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -135,13 +185,23 @@ const UsersPage = () => {
                       Depuis le{" "}
                       {new Date(user.created_at).toLocaleDateString("fr-FR")}
                     </span>
-                    <button
-                      type="button"
-                      className={`users__toggle-btn users__toggle-btn--${isActive ? "deactivate" : "activate"}`}
-                      onClick={() => handleToggleStatus(user)}
-                    >
-                      {isActive ? "Désactiver" : "Activer"}
-                    </button>
+                    <div className="users__footer-actions">
+                      <button
+                        type="button"
+                        className="users__reset-btn"
+                        onClick={() => handleOpenReset(user)}
+                        title="Réinitialiser le mot de passe"
+                      >
+                        <KeyRound size={13} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`users__toggle-btn users__toggle-btn--${isActive ? "deactivate" : "activate"}`}
+                        onClick={() => handleToggleStatus(user)}
+                      >
+                        {isActive ? "Désactiver" : "Activer"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -150,6 +210,7 @@ const UsersPage = () => {
         )}
       </div>
 
+      {/* Modale création bénévole */}
       {showModal && (
         <Modal
           title="Ajouter un bénévole"
@@ -258,6 +319,82 @@ const UsersPage = () => {
               Le rôle <strong>bénévole</strong> est attribué automatiquement. Le
               mot de passe sera hashé avec Argon2 avant stockage.
             </span>
+          </div>
+        </Modal>
+      )}
+
+      {/* Modale reset mot de passe */}
+      {showResetModal && selectedUser && (
+        <Modal
+          title="Réinitialiser le mot de passe"
+          icon={<KeyRound size={20} />}
+          onClose={handleCloseReset}
+          footer={
+            <div className="users__modal-actions">
+              <button
+                type="button"
+                className="users__modal-cancel"
+                onClick={handleCloseReset}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className="users__modal-submit"
+                onClick={handleResetPassword}
+                disabled={resetting || !newPassword || !confirmPassword}
+              >
+                <KeyRound size={15} />
+                {resetting ? "Réinitialisation..." : "Confirmer"}
+              </button>
+            </div>
+          }
+        >
+          <div className="users__modal-notice">
+            <Info size={15} className="users__modal-notice-icon" />
+            <span>
+              Vous allez réinitialiser le mot de passe de{" "}
+              <strong>
+                {selectedUser.firstname} {selectedUser.lastname}
+              </strong>
+              . Communiquez-lui le nouveau mot de passe par un canal sécurisé.
+            </span>
+          </div>
+
+          <div className="users__modal-field">
+            <label
+              htmlFor="reset-password"
+              className="users__modal-label users__modal-label--required"
+            >
+              Nouveau mot de passe
+            </label>
+            <input
+              id="reset-password"
+              className="users__modal-input"
+              type="password"
+              placeholder="••••••••"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+          </div>
+
+          <div className="users__modal-field">
+            <label
+              htmlFor="reset-confirm"
+              className="users__modal-label users__modal-label--required"
+            >
+              Confirmer le mot de passe
+            </label>
+            <input
+              id="reset-confirm"
+              className="users__modal-input"
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+            />
           </div>
         </Modal>
       )}
