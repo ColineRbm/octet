@@ -92,6 +92,12 @@ export const updateUserStatus = (id: number, is_active: boolean) =>
     body: JSON.stringify({ is_active }),
   });
 
+export const resetUserPassword = (id: number, newPassword: string) =>
+  apiFetch(`/api/users/${id}/password`, {
+    method: "PUT",
+    body: JSON.stringify({ newPassword }),
+  });
+
 // Beneficiaries
 export const getBeneficiaries = () => apiFetch("/api/beneficiaries");
 

@@ -83,4 +83,31 @@ const editStatus: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { browse, read, add, editStatus };
+// Reset password - PUT /api/users/:id/password (admin only)
+const resetPassword: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = Number(req.params.id);
+    const { newPassword } = req.body;
+
+    const password_hash = await argon2.hash(newPassword);
+
+    const affectedRows = await userRepository.updatePassword(
+      userId,
+      password_hash,
+    );
+
+    if (affectedRows === 0) {
+      res.sendStatus(404);
+    } else {
+      await logRepository.create("user_password_reset", req.user?.id ?? null, {
+        target_user_id: userId,
+      });
+
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default { browse, read, add, editStatus, resetPassword };
