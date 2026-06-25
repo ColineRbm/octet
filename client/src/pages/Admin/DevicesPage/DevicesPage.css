@@ -320,16 +320,16 @@
 
 .devices__table th:nth-child(1) {
   width: 280px;
-} /* Appareil */
+} /* Devices */
 .devices__table th:nth-child(2) {
   width: 130px;
-} /* Statut */
+} /* Status */
 .devices__table th:nth-child(3) {
   width: 130px;
-} /* Date réception */
+} /* Receipt date */
 .devices__table th:nth-child(4) {
   width: 120px;
-} /* Donateur */
+} /* Giver */
 .devices__table th:nth-child(5) {
   width: 160px;
 } /* Notes */

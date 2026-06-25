@@ -16,7 +16,6 @@ const PageLayout = ({
   actions,
   children,
 }: PageLayoutProps) => {
-  // This state controls the opening of the drawer on mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (

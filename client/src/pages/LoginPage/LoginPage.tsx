@@ -57,7 +57,6 @@ const LoginPage = () => {
       {/* LEFT PART */}
       <div className="login-page__left">
         <div>
-          {/* Brand */}
           <div className="login-page__brand">
             <div className="login-page__brand-icon">♻</div>
             <div>
@@ -68,7 +67,6 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Hero */}
           <div className="login-page__hero">
             <div className="login-page__hero-label">Mission solidaire</div>
             <h1 className="login-page__hero-title">
@@ -84,7 +82,6 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* Features */}
           <div className="login-page__features">
             {features.map((feature) => (
               <div key={feature.title} className="login-page__feature">
@@ -100,7 +97,6 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="login-page__stats">
           <div className="login-page__stats-row">
             {stats.map((stat, index) => (
@@ -127,11 +123,9 @@ const LoginPage = () => {
             Accès réservé aux membres de l'équipe
           </p>
 
-          {/* Error message */}
           {error && <div className="login-page__error">⚠️ {error}</div>}
 
           <form className="login-page__form" onSubmit={handleSubmit}>
-            {/* Email field */}
             <div className="login-page__field">
               <label htmlFor="email" className="login-page__label">
                 Adresse email
@@ -148,7 +142,6 @@ const LoginPage = () => {
               />
             </div>
 
-            {/* Password field */}
             <div className="login-page__field">
               <label htmlFor="password" className="login-page__label">
                 Mot de passe
@@ -179,7 +172,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Submit button */}
             <button
               type="submit"
               className="login-page__submit"
@@ -190,7 +182,6 @@ const LoginPage = () => {
           </form>
         </div>
 
-        {/* Security note */}
         <div className="login-page__security">🔒 Chiffrement Argon2 + JWT</div>
       </div>
     </div>

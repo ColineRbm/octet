@@ -12,7 +12,7 @@ const Topbar = ({ title, subtitle, actions, onMenuToggle }: TopbarProps) => {
   return (
     <div className="topbar">
       <div className="topbar__left">
-        {/* Hamburger button — visible only on mobile via CSS         */}
+        {/* Hamburger button — visible only on mobile via CSS */}
         <button
           type="button"
           className="topbar__menu-btn"

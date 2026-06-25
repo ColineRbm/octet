@@ -15,7 +15,6 @@ const UsersPage = () => {
   const { users, loading, refetch } = useUsers();
   const { toast, showToast } = useToast();
 
-  // Modale création
   const [showModal, setShowModal] = useState(false);
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -23,7 +22,6 @@ const UsersPage = () => {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Modale reset mot de passe
   const [showResetModal, setShowResetModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newPassword, setNewPassword] = useState("");
@@ -210,7 +208,6 @@ const UsersPage = () => {
         )}
       </div>
 
-      {/* Modale création bénévole */}
       {showModal && (
         <Modal
           title="Ajouter un bénévole"
@@ -323,7 +320,6 @@ const UsersPage = () => {
         </Modal>
       )}
 
-      {/* Modale reset mot de passe */}
       {showResetModal && selectedUser && (
         <Modal
           title="Réinitialiser le mot de passe"
