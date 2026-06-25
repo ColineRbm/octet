@@ -42,7 +42,6 @@ const add: RequestHandler = async (req, res, next) => {
 
     const insertId = await beneficiaryRepository.create(newBeneficiary);
 
-    // Log : admin a créé un nouveau bénéficiaire
     await logRepository.create("beneficiary_created", req.user?.id ?? null, {
       beneficiary_id: insertId,
       name: newBeneficiary.name,

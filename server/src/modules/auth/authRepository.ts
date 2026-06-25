@@ -1,7 +1,6 @@
 import databaseClient from "../../../database/client";
 import type { Result, Rows } from "../../../database/client";
 
-// Define the User type matching our database schema
 interface User {
   id: number;
   firstname: string;

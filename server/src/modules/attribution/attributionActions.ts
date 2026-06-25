@@ -50,7 +50,6 @@ const add: RequestHandler = async (req, res, next) => {
       null,
     );
 
-    // Log : admin a créé une attribution
     await logRepository.create("attribution_created", req.user?.id ?? null, {
       attribution_id: insertId,
       device_id: newAttribution.device_id,

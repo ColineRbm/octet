@@ -1,7 +1,6 @@
 import databaseClient from "../../../database/client";
 import type { Result, Rows } from "../../../database/client";
 
-// Define the Beneficiary type matching our database schema
 interface Beneficiary {
   id: number;
   name: string;

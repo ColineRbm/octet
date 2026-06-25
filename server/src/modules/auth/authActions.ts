@@ -8,13 +8,9 @@ import authRepository from "./authRepository";
 // POST /api/auth/login
 const login: RequestHandler = async (req, res, next) => {
   try {
-    // Get email and password from request body
     const { email, password } = req.body;
-
-    // Find user by email in database
     const user = await authRepository.findByEmail(email);
 
-    // If user not found, respond with HTTP 401 (Unauthorized)
     if (user == null) {
       await logRepository.create("login_failed", null, {
         email,
@@ -24,10 +20,8 @@ const login: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // Verify password with argon2
     const isPasswordValid = await argon2.verify(user.password_hash, password);
 
-    // If password is wrong, respond with HTTP 401 (Unauthorized)
     if (!isPasswordValid) {
       await logRepository.create("login_failed", user.id, {
         email,
@@ -37,17 +31,14 @@ const login: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // Generate JWT token with user info
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "24h" },
     );
 
-    // Log successful login
     await logRepository.create("login_success", user.id, { email });
 
-    // Respond with token and user info
     res.json({
       token,
       user: {

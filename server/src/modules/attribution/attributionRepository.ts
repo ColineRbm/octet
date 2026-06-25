@@ -1,7 +1,6 @@
 import databaseClient from "../../../database/client";
 import type { Result, Rows } from "../../../database/client";
 
-// Define the Attribution type matching our database schema
 interface Attribution {
   id: number;
   device_id: number;
