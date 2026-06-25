@@ -10,8 +10,7 @@ class LogRepository {
     try {
       await Log.create({ action, user_id: userId, details });
     } catch (err) {
-      // On logue l'erreur dans la console serveur, mais on ne la propage pas :
-      // un souci MongoDB ne doit jamais faire échouer une action métier.
+      // MongoDB failure must never break business logic
       console.error("Erreur lors de l'écriture du log MongoDB :", err);
     }
   }

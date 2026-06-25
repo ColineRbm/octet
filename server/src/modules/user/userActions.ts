@@ -44,7 +44,6 @@ const add: RequestHandler = async (req, res, next) => {
       password_hash,
     });
 
-    // Log : admin a créé un nouveau bénévole
     await logRepository.create("user_created", req.user?.id ?? null, {
       new_user_email: email,
       new_user_id: insertId,
@@ -70,7 +69,6 @@ const editStatus: RequestHandler = async (req, res, next) => {
     if (affectedRows === 0) {
       res.sendStatus(404);
     } else {
-      // Log : admin a activé ou désactivé un bénévole
       await logRepository.create("user_status_changed", req.user?.id ?? null, {
         target_user_id: userId,
         is_active,

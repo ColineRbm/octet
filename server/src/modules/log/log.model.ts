@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 
-// Interface TypeScript — comme tes types dans device.types.ts
 export type LogAction =
   | "login_success"
   | "login_failed"
@@ -13,7 +12,7 @@ export type LogAction =
   | "device_deleted";
 
 export interface LogDocument {
-  action: LogAction; // au lieu de "string"
+  action: LogAction;
   user_id: number | null;
   details: Record<string, unknown>;
   timestamp: Date;
