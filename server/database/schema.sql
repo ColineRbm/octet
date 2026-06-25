@@ -1,4 +1,5 @@
 -- Reset
+DROP TABLE IF EXISTS device_action;
 DROP TABLE IF EXISTS attribution;
 DROP TABLE IF EXISTS device;
 DROP TABLE IF EXISTS beneficiary;

@@ -1,13 +1,19 @@
 import express from "express";
 
-const router = express.Router();
-
+// Middlewares
 import { isAdmin, verifyToken } from "./middlewares/authMiddleware";
 import { validate } from "./middlewares/validateMiddleware";
 
-// Auth routes (public)
+// Modules (actions)
+import attributionActions from "./modules/attribution/attributionActions";
 import authActions from "./modules/auth/authActions";
+import beneficiaryActions from "./modules/beneficiary/beneficiaryActions";
+import deviceActions from "./modules/device/deviceActions";
+import userActions from "./modules/user/userActions";
 
+const router = express.Router();
+
+// Auth routes (public)
 router.post(
   "/api/auth/login",
   validate([
@@ -18,8 +24,6 @@ router.post(
 );
 
 // Device routes
-import deviceActions from "./modules/device/deviceActions";
-
 router.get("/api/devices", verifyToken, deviceActions.browse);
 router.get("/api/devices/my", verifyToken, deviceActions.readByUser);
 router.get(
@@ -78,11 +82,10 @@ router.put(
 );
 
 router.put("/api/devices/:id/notes", verifyToken, deviceActions.editNotes);
+
 router.delete("/api/devices/:id", verifyToken, isAdmin, deviceActions.destroy);
 
 // User routes (admin only)
-import userActions from "./modules/user/userActions";
-
 router.get("/api/users", verifyToken, isAdmin, userActions.browse);
 router.get("/api/users/:id", verifyToken, isAdmin, userActions.read);
 
@@ -129,8 +132,6 @@ router.put(
 );
 
 // Beneficiary routes (admin only)
-import beneficiaryActions from "./modules/beneficiary/beneficiaryActions";
-
 router.get(
   "/api/beneficiaries",
   verifyToken,
@@ -170,8 +171,6 @@ router.post(
 );
 
 // Attribution routes (admin only)
-import attributionActions from "./modules/attribution/attributionActions";
-
 router.get(
   "/api/attributions",
   verifyToken,
