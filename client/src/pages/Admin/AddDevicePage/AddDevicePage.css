@@ -42,7 +42,6 @@
   gap: 16px;
 }
 
-/* GRID */
 .add-device__type-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -163,11 +162,6 @@
   box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.12);
 }
 
-.add-device__hint {
-  font-size: 11px;
-  color: var(--color-text-sub);
-}
-
 .add-device__status-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -208,12 +202,6 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text);
-}
-
-.add-device__status-sub {
-  font-size: 10px;
-  color: var(--color-text-sub);
-  margin-top: 1px;
 }
 
 .add-device__recap {

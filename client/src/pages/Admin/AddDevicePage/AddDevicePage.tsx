@@ -296,20 +296,7 @@ const AddDevicePage = () => {
             </div>
           </div>
 
-          {error && (
-            <div
-              style={{
-                background: "var(--color-danger-pale)",
-                border: "0.5px solid #F0C0C0",
-                borderRadius: "var(--radius-sm)",
-                padding: "10px 14px",
-                fontSize: 13,
-                color: "var(--color-danger)",
-              }}
-            >
-              ⚠️ {error}
-            </div>
-          )}
+          {error && <div className="attributions__error">⚠️ {error}</div>}
         </div>
 
         {/* RECAP */}

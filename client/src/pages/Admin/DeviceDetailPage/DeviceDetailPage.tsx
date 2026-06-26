@@ -365,14 +365,7 @@ const DeviceDetailPage = () => {
               <div className="device-detail__mini-row">
                 <span className="device-detail__mini-key">Statut actuel</span>
                 {editingStatus ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 6,
-                      alignItems: "flex-end",
-                    }}
-                  >
+                  <div className="device-detail__status-edit">
                     <select
                       className="device-detail__status-select"
                       value={statusValue}
@@ -386,7 +379,7 @@ const DeviceDetailPage = () => {
                         </option>
                       ))}
                     </select>
-                    <div style={{ display: "flex", gap: 6 }}>
+                    <div className="device-detail__status-actions">
                       <button
                         type="button"
                         className="device-detail__notes-cancel"
@@ -408,9 +401,7 @@ const DeviceDetailPage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
+                  <div className="device-detail__status-display">
                     <StatusBadge status={device.status} />
                     <button
                       type="button"

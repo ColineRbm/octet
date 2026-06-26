@@ -76,23 +76,6 @@
   flex-shrink: 0;
 }
 
-.device-detail__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.device-detail__badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
 /* LAYOUT */
 .device-detail__layout {
   display: grid;
@@ -266,51 +249,6 @@
   gap: 14px;
 }
 
-/* CTA */
-.device-detail__cta {
-  background: var(--color-abricot-pale);
-  border: 1px solid var(--color-abricot);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-}
-
-.device-detail__cta-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 4px;
-}
-
-.device-detail__cta-sub {
-  font-size: 12px;
-  color: var(--color-text-sub);
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.device-detail__cta-btn {
-  width: 100%;
-  height: 40px;
-  background: var(--color-abricot);
-  color: var(--color-ardoise-800);
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  font-family: var(--font-sans);
-  transition: background 0.15s;
-}
-
-.device-detail__cta-btn:hover {
-  background: var(--color-abricot-dark);
-  color: var(--color-white);
-}
-
 /* MINI CARD */
 .device-detail__mini-card {
   background: var(--color-white);
@@ -350,16 +288,6 @@
 .device-detail__mini-divider {
   border: none;
   border-top: 0.5px solid var(--color-ardoise-50);
-}
-
-/* LOADING */
-.device-detail__loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-  color: var(--color-text-sub);
-  font-size: 13px;
 }
 
 .device-detail__not-found {
@@ -460,6 +388,25 @@
   color: var(--color-text);
   background: var(--color-white);
   cursor: pointer;
+}
+
+/* STATUS EDIT */
+.device-detail__status-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.device-detail__status-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.device-detail__status-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* TABLET */

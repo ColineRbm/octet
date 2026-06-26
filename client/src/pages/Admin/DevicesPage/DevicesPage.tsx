@@ -195,7 +195,7 @@ const DevicesPage = () => {
                   const isOld = days > 30 && device.status === "to_sort";
                   return (
                     <tr key={device.id}>
-                      {/* Column 1: no data-label, displayed in the map header on mobile */}
+                      {/* Column 1: no data-label, displayed in the card header on mobile */}
                       <td>
                         <div className="devices__device-cell">
                           <div className="devices__device-icon">
@@ -215,57 +215,25 @@ const DevicesPage = () => {
                       <td data-label="Statut">
                         <StatusBadge status={device.status} />
                       </td>
-                      {/* Column 3 : Receipt_date */}
-                      <td
-                        data-label="Reçu le"
-                        style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 3,
-                          }}
-                        >
+                      {/* Column 3 : Receipt date */}
+                      <td data-label="Reçu le" className="devices__td--sub">
+                        <div className="devices__td--date">
                           {new Date(device.received_at).toLocaleDateString(
                             "fr-FR",
                           )}
                           {isOld && (
-                            <span
-                              style={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                color: "#92400E",
-                                background: "#FDE68A",
-                                padding: "1px 6px",
-                                borderRadius: 10,
-                                width: "fit-content",
-                              }}
-                            >
+                            <span className="devices__old-badge">
                               ⚠️ {days} jours
                             </span>
                           )}
                         </div>
                       </td>
                       {/* Column 4 : Donor — hidden on mobile/tablet */}
-                      <td
-                        data-label="Donateur"
-                        style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                      >
+                      <td data-label="Donateur" className="devices__td--sub">
                         {device.donor ?? "—"}
                       </td>
                       {/* Column 5 : Notes — hidden on mobile/tablet */}
-                      <td
-                        data-label="Notes"
-                        style={{
-                          color: "var(--color-text-sub)",
-                          fontSize: 12,
-                          maxWidth: 160,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <td data-label="Notes" className="devices__td--notes">
                         {device.notes ?? "—"}
                       </td>
                       {/* Column 6 : Actions */}

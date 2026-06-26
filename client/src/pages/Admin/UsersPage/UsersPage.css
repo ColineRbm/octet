@@ -154,30 +154,6 @@
   color: var(--color-white);
 }
 
-/* EMPTY */
-.users__empty {
-  padding: 48px;
-  text-align: center;
-  color: var(--color-text-sub);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: var(--color-white);
-  border: 0.5px solid var(--color-border);
-  border-radius: var(--radius);
-}
-
-/* LOADING */
-.users__loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-  color: var(--color-text-sub);
-  font-size: 13px;
-}
-
 /* MODAL */
 .users__modal-overlay {
   position: fixed;

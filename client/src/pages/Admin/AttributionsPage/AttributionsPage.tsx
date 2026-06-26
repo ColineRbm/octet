@@ -195,14 +195,12 @@ const AttributionsPage = () => {
                       </div>
                     </td>
                     <td data-label="Bénéficiaire">
-                      <div style={{ fontWeight: 500 }}>
+                      <div className="attributions__beneficiary-name">
                         {attr.beneficiary_firstname
                           ? `${attr.beneficiary_firstname} ${attr.beneficiary_name}`
                           : attr.beneficiary_name}
                       </div>
-                      <div
-                        style={{ fontSize: 11, color: "var(--color-text-sub)" }}
-                      >
+                      <div className="attributions__td--sub">
                         {attr.structure_type}
                       </div>
                     </td>
@@ -213,24 +211,15 @@ const AttributionsPage = () => {
                         {attr.cession_type === "donation" ? "Don" : "Cession"}
                       </span>
                     </td>
-                    <td
-                      data-label="Prix"
-                      style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                    >
+                    <td data-label="Prix" className="attributions__td--sub">
                       {attr.cession_type === "donation"
                         ? "Gratuit"
                         : `${attr.price} €`}
                     </td>
-                    <td
-                      data-label="Date"
-                      style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                    >
+                    <td data-label="Date" className="attributions__td--sub">
                       {new Date(attr.attributed_at).toLocaleDateString("fr-FR")}
                     </td>
-                    <td
-                      data-label="Par"
-                      style={{ color: "var(--color-text-sub)", fontSize: 12 }}
-                    >
+                    <td data-label="Par" className="attributions__td--sub">
                       {attr.attributed_by_firstname}{" "}
                       {attr.attributed_by_lastname}
                     </td>
@@ -267,19 +256,7 @@ const AttributionsPage = () => {
             </>
           }
         >
-          {error && (
-            <div
-              style={{
-                color: "var(--color-danger)",
-                fontSize: 13,
-                background: "var(--color-danger-pale)",
-                padding: "8px 12px",
-                borderRadius: "var(--radius-sm)",
-              }}
-            >
-              ⚠️ {error}
-            </div>
-          )}
+          {error && <div className="attributions__error">⚠️ {error}</div>}
 
           <div className="beneficiaries__modal-field">
             <label
@@ -330,25 +307,13 @@ const AttributionsPage = () => {
             <div className="beneficiaries__modal-label beneficiaries__modal-label--required">
               Type de cession
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
+            <div className="attributions__cession-type-row">
               {(["donation", "cession"] as CessionType[]).map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => setCessionType(type)}
-                  style={{
-                    flex: 1,
-                    padding: "8px 12px",
-                    borderRadius: "var(--radius-sm)",
-                    border: `1.5px solid ${cessionType === type ? "var(--color-text)" : "var(--color-border)"}`,
-                    background:
-                      cessionType === type
-                        ? "var(--color-ardoise-50)"
-                        : "transparent",
-                    fontWeight: cessionType === type ? 600 : 400,
-                    fontSize: 13,
-                    cursor: "pointer",
-                  }}
+                  className={`attributions__cession-type-btn${cessionType === type ? " attributions__cession-type-btn--active" : ""}`}
                 >
                   {type === "donation"
                     ? "🎁 Don gratuit"

@@ -111,13 +111,6 @@
   justify-content: space-between;
 }
 
-.dashboard__card-head-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-abricot);
-}
-
 .dashboard__card-title {
   font-size: 13px;
   font-weight: 600;
@@ -278,33 +271,26 @@
   color: var(--color-text-sub);
 }
 
-.dashboard__ready-btn {
-  height: 28px;
-  padding: 0 10px;
-  background: var(--color-abricot);
-  color: var(--color-ardoise-800);
-  border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  flex-shrink: 0;
-}
-
-.dashboard__ready-btn:hover {
-  background: var(--color-abricot-dark);
-  color: var(--color-white);
-}
-
-/* LOADING */
-.dashboard__loading {
+.dashboard__left-col {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px;
-  color: var(--color-text-sub);
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard__empty-msg {
   font-size: 13px;
+  color: var(--color-text-sub);
+  text-align: center;
+  padding: 16px 0;
+}
+
+.dashboard__card-count {
+  font-size: 11px;
+  color: var(--color-text-sub);
+}
+
+.dashboard__activity-dot--success {
+  background: var(--color-success);
 }
 
 /* TABLET */

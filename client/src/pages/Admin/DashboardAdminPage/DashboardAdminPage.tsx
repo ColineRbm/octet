@@ -129,8 +129,9 @@ const DashboardAdminPage = () => {
 
         {/* BODY GRID */}
         <div className="dashboard__grid">
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {/* Répartition par statut */}
+          <div className="dashboard__left-col">
+            {" "}
+            {/* Status breakdown */}
             <div className="dashboard__card">
               <div className="dashboard__card-head">
                 <span className="dashboard__card-title">
@@ -169,8 +170,7 @@ const DashboardAdminPage = () => {
                 })}
               </div>
             </div>
-
-            {/* Recent Assignments */}
+            {/* Recent attributions */}
             <div className="dashboard__card">
               <div className="dashboard__card-head">
                 <span className="dashboard__card-title">
@@ -186,24 +186,14 @@ const DashboardAdminPage = () => {
               </div>
               <div className="dashboard__card-body">
                 {recentAttributions.length === 0 ? (
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "var(--color-text-sub)",
-                      textAlign: "center",
-                      padding: "16px 0",
-                    }}
-                  >
+                  <div className="dashboard__empty-msg">
                     Aucune attribution pour l'instant
                   </div>
                 ) : (
                   recentAttributions.map((attr, index) => (
                     <div key={attr.id} className="dashboard__activity-item">
                       <div className="dashboard__activity-dot-col">
-                        <div
-                          className="dashboard__activity-dot"
-                          style={{ background: "var(--color-success)" }}
-                        />
+                        <div className="dashboard__activity-dot dashboard__activity-dot--success" />
                         {index < recentAttributions.length - 1 && (
                           <div className="dashboard__activity-line" />
                         )}
@@ -230,25 +220,18 @@ const DashboardAdminPage = () => {
             </div>
           </div>
 
-          {/* Ready */}
+          {/* Ready to assign */}
           <div className="dashboard__card">
             <div className="dashboard__card-head">
               <span className="dashboard__card-title">Prêts à attribuer</span>
-              <span style={{ fontSize: 11, color: "var(--color-text-sub)" }}>
+              <span className="dashboard__card-count">
                 {readyDevices.length} appareil
                 {readyDevices.length > 1 ? "s" : ""}
               </span>
             </div>
             <div className="dashboard__card-body">
               {readyDevices.length === 0 ? (
-                <div
-                  style={{
-                    fontSize: 13,
-                    color: "var(--color-text-sub)",
-                    textAlign: "center",
-                    padding: "16px 0",
-                  }}
-                >
+                <div className="dashboard__empty-msg">
                   Aucun appareil prêt pour l'instant
                 </div>
               ) : (

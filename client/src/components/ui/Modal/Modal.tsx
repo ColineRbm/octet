@@ -14,7 +14,7 @@ const Modal = ({ title, icon, onClose, footer, children }: ModalProps) => {
   const modalRef = useRef<HTMLDialogElement>(null);
   const titleId = "modal-title";
 
-  // close with Echap
+  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -22,7 +22,7 @@ const Modal = ({ title, icon, onClose, footer, children }: ModalProps) => {
         return;
       }
 
-      // Focus trap — Tab et Shift+Tab
+      // Focus trap — Tab and Shift+Tab
       if (e.key === "Tab" && modalRef.current) {
         const focusableElements =
           modalRef.current.querySelectorAll<HTMLElement>(
