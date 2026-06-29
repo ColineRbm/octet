@@ -23,6 +23,8 @@ router.post(
   authActions.login,
 );
 
+router.post("/api/auth/logout", authActions.logout);
+
 // Device routes
 router.get("/api/devices", verifyToken, deviceActions.browse);
 router.get("/api/devices/my", verifyToken, deviceActions.readByUser);

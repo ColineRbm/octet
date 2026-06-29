@@ -2,16 +2,13 @@ import type { AuthUser, Device } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3310";
 
-const getToken = () => localStorage.getItem("token");
-
 const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
-  const token = getToken();
-
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
+    // Send cookies with every request (required for httpOnly JWT cookie)
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -31,11 +28,14 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
 export const login = (
   email: string,
   password: string,
-): Promise<{ token: string; user: AuthUser }> =>
+): Promise<{ user: AuthUser }> =>
   apiFetch("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
+
+export const logout = (): Promise<null> =>
+  apiFetch("/api/auth/logout", { method: "POST" });
 
 // Devices
 export const getDevices = () => apiFetch("/api/devices");

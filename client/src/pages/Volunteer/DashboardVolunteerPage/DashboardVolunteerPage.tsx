@@ -23,7 +23,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useMyActions, useMyDevices, useToast } from "../../../hooks";
 import { updateDeviceStatus } from "../../../services/api";
 import type { Device } from "../../../types";
-import "./DashboardBenevolePage.css";
+import "./DashboardVolunteerPage.css";
 
 type Tab = "file" | "history" | "stats";
 

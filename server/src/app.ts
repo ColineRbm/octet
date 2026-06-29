@@ -1,22 +1,29 @@
+import fs from "node:fs";
+import path from "node:path";
+
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
+import type { ErrorRequestHandler } from "express";
+import router from "./router";
 
 const app = express();
 
-// CORS — only allow client domain
-import cors from "cors";
-
+// CORS — only allow client domain, with credentials for httpOnly cookies
 if (process.env.CLIENT_URL != null) {
-  app.use(cors({ origin: [process.env.CLIENT_URL] }));
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL,
+      credentials: true,
+    }),
+  );
 }
 
+// Parse cookies — required for httpOnly JWT cookie
+app.use(cookieParser());
 app.use(express.json());
 
-import router from "./router";
-
 app.use(router);
-
-import fs from "node:fs";
-import path from "node:path";
 
 const publicFolderPath = path.join(__dirname, "../../server/public");
 
@@ -33,8 +40,6 @@ if (fs.existsSync(clientBuildPath)) {
     res.sendFile("index.html", { root: clientBuildPath });
   });
 }
-
-import type { ErrorRequestHandler } from "express";
 
 const logErrors: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err);

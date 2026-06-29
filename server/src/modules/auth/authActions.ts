@@ -38,6 +38,13 @@ const login: RequestHandler = async (req, res, next) => {
       { expiresIn: "24h" },
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     await logRepository.create("login_success", user.id, { email });
 
     res.json({
@@ -55,4 +62,14 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { login };
+// POST /api/auth/logout
+const logout: RequestHandler = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
+export default { login, logout };

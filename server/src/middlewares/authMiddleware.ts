@@ -4,15 +4,12 @@ import jwt from "jsonwebtoken";
 
 // Verify JWT token and attach user info to request
 export const verifyToken: RequestHandler = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token;
 
-  if (authHeader == null) {
+  if (token == null) {
     res.sendStatus(StatusCodes.UNAUTHORIZED);
     return;
   }
-
-  // Token format: "Bearer eyJhbGci..."
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
