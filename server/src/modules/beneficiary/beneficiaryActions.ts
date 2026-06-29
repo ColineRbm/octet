@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import logRepository from "../log/logRepository";
 import beneficiaryRepository from "./beneficiaryRepository";
@@ -20,7 +21,7 @@ const read: RequestHandler = async (req, res, next) => {
     const beneficiary = await beneficiaryRepository.read(beneficiaryId);
 
     if (beneficiary == null) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       res.json(beneficiary);
     }
@@ -48,7 +49,7 @@ const add: RequestHandler = async (req, res, next) => {
       structure_type: newBeneficiary.structure_type,
     });
 
-    res.status(201).json({ insertId });
+    res.status(StatusCodes.CREATED).json({ insertId });
   } catch (err) {
     next(err);
   }

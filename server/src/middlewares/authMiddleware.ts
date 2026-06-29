@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 
 // Verify JWT token and attach user info to request
@@ -6,7 +7,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (authHeader == null) {
-    res.sendStatus(401);
+    res.sendStatus(StatusCodes.UNAUTHORIZED);
     return;
   }
 
@@ -23,14 +24,14 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 
     next();
   } catch {
-    res.sendStatus(401);
+    res.sendStatus(StatusCodes.UNAUTHORIZED);
   }
 };
 
 // Verify user has admin role
 export const isAdmin: RequestHandler = (req, res, next) => {
   if (req.user?.role !== "admin") {
-    res.sendStatus(403);
+    res.sendStatus(StatusCodes.FORBIDDEN);
     return;
   }
   next();

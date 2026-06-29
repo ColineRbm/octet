@@ -1,5 +1,6 @@
 import argon2 from "argon2";
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import logRepository from "../log/logRepository";
 import userRepository from "./userRepository";
@@ -21,7 +22,7 @@ const read: RequestHandler = async (req, res, next) => {
     const user = await userRepository.read(userId);
 
     if (user == null) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       res.json(user);
     }
@@ -49,7 +50,7 @@ const add: RequestHandler = async (req, res, next) => {
       new_user_id: insertId,
     });
 
-    res.status(201).json({ insertId });
+    res.status(StatusCodes.CREATED).json({ insertId });
   } catch (err) {
     next(err);
   }
@@ -67,14 +68,14 @@ const editStatus: RequestHandler = async (req, res, next) => {
     );
 
     if (affectedRows === 0) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       await logRepository.create("user_status_changed", req.user?.id ?? null, {
         target_user_id: userId,
         is_active,
       });
 
-      res.sendStatus(204);
+      res.sendStatus(StatusCodes.NO_CONTENT);
     }
   } catch (err) {
     next(err);
@@ -95,13 +96,13 @@ const resetPassword: RequestHandler = async (req, res, next) => {
     );
 
     if (affectedRows === 0) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       await logRepository.create("user_password_reset", req.user?.id ?? null, {
         target_user_id: userId,
       });
 
-      res.sendStatus(204);
+      res.sendStatus(StatusCodes.NO_CONTENT);
     }
   } catch (err) {
     next(err);

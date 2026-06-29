@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import logRepository from "../log/logRepository";
 import deviceRepository from "./deviceRepository";
@@ -18,7 +19,7 @@ const read: RequestHandler = async (req, res, next) => {
     const device = await deviceRepository.read(deviceId);
 
     if (device == null) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       res.json(device);
     }
@@ -53,7 +54,7 @@ const add: RequestHandler = async (req, res, next) => {
       model: newDevice.model,
     });
 
-    res.status(201).json({ insertId });
+    res.status(StatusCodes.CREATED).json({ insertId });
   } catch (err) {
     next(err);
   }
@@ -72,7 +73,7 @@ const editStatus: RequestHandler = async (req, res, next) => {
     );
 
     if (affectedRows === 0) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
       return;
     }
 
@@ -87,7 +88,7 @@ const editStatus: RequestHandler = async (req, res, next) => {
       await deviceRepository.createAction(deviceId, userId, status);
     }
 
-    res.sendStatus(204);
+    res.sendStatus(StatusCodes.NO_CONTENT);
   } catch (err) {
     next(err);
   }
@@ -99,12 +100,12 @@ const destroy: RequestHandler = async (req, res, next) => {
 
     const device = await deviceRepository.read(deviceId);
     if (!device) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
       return;
     }
 
     if (device.status !== "to_sort") {
-      res.status(409).json({
+      res.status(StatusCodes.CONFLICT).json({
         error:
           "Seuls les appareils en statut 'À trier' peuvent être supprimés.",
       });
@@ -120,7 +121,7 @@ const destroy: RequestHandler = async (req, res, next) => {
       type: device.type,
     });
 
-    res.sendStatus(204);
+    res.sendStatus(StatusCodes.NO_CONTENT);
   } catch (err) {
     next(err);
   }
@@ -154,9 +155,9 @@ const editNotes: RequestHandler = async (req, res, next) => {
     const affectedRows = await deviceRepository.updateNotes(deviceId, notes);
 
     if (affectedRows === 0) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
-      res.sendStatus(204);
+      res.sendStatus(StatusCodes.NO_CONTENT);
     }
   } catch (err) {
     next(err);

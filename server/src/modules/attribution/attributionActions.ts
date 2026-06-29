@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import deviceRepository from "../device/deviceRepository";
 import logRepository from "../log/logRepository";
@@ -21,7 +22,7 @@ const read: RequestHandler = async (req, res, next) => {
     const attribution = await attributionRepository.read(attributionId);
 
     if (attribution == null) {
-      res.sendStatus(404);
+      res.sendStatus(StatusCodes.NOT_FOUND);
     } else {
       res.json(attribution);
     }
@@ -58,7 +59,7 @@ const add: RequestHandler = async (req, res, next) => {
       price: newAttribution.price,
     });
 
-    res.status(201).json({ insertId });
+    res.status(StatusCodes.CREATED).json({ insertId });
   } catch (err) {
     next(err);
   }

@@ -1,5 +1,6 @@
 import argon2 from "argon2";
 import type { RequestHandler } from "express";
+import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
 
 import logRepository from "../log/logRepository";
@@ -16,7 +17,7 @@ const login: RequestHandler = async (req, res, next) => {
         email,
         reason: "user_not_found",
       });
-      res.sendStatus(401);
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
       return;
     }
 
@@ -27,7 +28,7 @@ const login: RequestHandler = async (req, res, next) => {
         email,
         reason: "wrong_password",
       });
-      res.sendStatus(401);
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
       return;
     }
 
