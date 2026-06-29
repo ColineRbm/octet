@@ -83,7 +83,11 @@ const UsersPage = () => {
       showToast("Bénévole créé avec succès !");
     } catch (err) {
       console.error(err);
-      showToast("Une erreur est survenue.", "error");
+      if (err instanceof Error && err.message.includes("409")) {
+        showToast("Cet email est déjà utilisé.", "error");
+      } else {
+        showToast("Une erreur est survenue.", "error");
+      }
     } finally {
       setSubmitting(false);
     }
