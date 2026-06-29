@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 type ValidationRule = {
   field: string;
   required?: boolean;
-  type?: "string" | "number";
+  type?: "string" | "number" | "boolean";
   minLength?: number;
   maxLength?: number;
   isEmail?: boolean;
@@ -40,6 +40,12 @@ export const validate = (rules: ValidationRule[]): RequestHandler => {
 
       if (rule.type === "number" && Number.isNaN(Number(value))) {
         errors.push(`Le champ "${rule.field}" doit être un nombre.`);
+        continue;
+      }
+
+      // Boolean check
+      if (rule.type === "boolean" && typeof value !== "boolean") {
+        errors.push(`Le champ "${rule.field}" doit être un booléen.`);
         continue;
       }
 

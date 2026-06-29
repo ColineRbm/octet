@@ -81,7 +81,12 @@ router.put(
   deviceActions.editStatus,
 );
 
-router.put("/api/devices/:id/notes", verifyToken, deviceActions.editNotes);
+router.put(
+  "/api/devices/:id/notes",
+  verifyToken,
+  validate([{ field: "notes", type: "string", maxLength: 1000 }]),
+  deviceActions.editNotes,
+);
 
 router.delete("/api/devices/:id", verifyToken, isAdmin, deviceActions.destroy);
 
@@ -118,6 +123,7 @@ router.put(
   "/api/users/:id/status",
   verifyToken,
   isAdmin,
+  validate([{ field: "is_active", required: true, type: "boolean" }]),
   userActions.editStatus,
 );
 
